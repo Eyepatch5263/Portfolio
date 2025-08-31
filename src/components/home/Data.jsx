@@ -14,7 +14,7 @@ const Data = () => {
                 Web Developer
             </h3>
             <p className="home__description">
-                I'm a creative designer and Full stack developer based in India. Looking for software developer Role Intern. 
+                I&apos;m a creative designer and Full stack developer based in India. Looking for software developer Role Intern. 
             </p>
             <a href="https://www.eyepatch5263.me" className="button button--flex" target='_blank'>
                 Say Hello
