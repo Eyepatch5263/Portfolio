@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://eyepatch.works/sitemap.xml
