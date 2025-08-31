@@ -38,7 +38,7 @@ export const projectsData = [
     },
     {
         id: 6,
-        image: '/Solify.jpg',
+        image: '/solify.jpg',
         title: "Trip Planner",
         category: "design",
         link: "https://www.figma.com/design/BHy7hjWNbDjHTD9UrXCSJ8/Final-Designs?node-id=326-4924&t=1dEoG3e7SvDGdrPg-1"
