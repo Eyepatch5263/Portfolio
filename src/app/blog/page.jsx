@@ -46,7 +46,7 @@ export default function BlogPage() {
   }, []);
   return <main style={{ fontFamily: "georgia" }} className="main-content">
     <section className="blog-header">
-      <h1>My Blog</h1>
+      <h2 className='section__title'>My Blog</h2>
       <p>Thoughts, tutorials, and insights about web development, design, and technology</p>
     </section>
 

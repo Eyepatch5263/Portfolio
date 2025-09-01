@@ -220,6 +220,10 @@
                 font-size: 0.9rem;
             }
         }
+        .section__title {
+  font-size: var(--h1-font-size);
+  color: var(--title-color);
+}
 
         /* Different gradient backgrounds for blog images */
     .blog-card:nth-child(1) .blog-image { background: linear-gradient(45deg, #313131 0%, #eee 100%); }
