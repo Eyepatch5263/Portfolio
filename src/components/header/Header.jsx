@@ -56,6 +56,11 @@ export const Header = () => {
                             </a>
                         </li>
                         <li className="nav__item">
+                            <a href="/blog" className="nav__link">
+                                <i class="uil uil-bing nav__icon"></i>Blog
+                            </a>
+                        </li>
+                        <li className="nav__item">
                             <a onClick={() => { setActiveNav("#contact") }} href="#contact" className="nav__link">
                                 <i class="uil uil-message nav__icon"></i>Contact
                             </a>

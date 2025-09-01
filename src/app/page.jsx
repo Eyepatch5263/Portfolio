@@ -13,19 +13,19 @@ import Work from '../components/work/Work';
 export default function HomePage() {
   return (
     <>
-      <Header/>
+      <Header />
       <main className='main'>
-        <Home/>
-        <About/>
-        <Skills/>
-        <Services/>
-        <Qualification/>
-        <Work/>
-        <Testimonial/>
-        <Contact/>
+        <Home />
+        <About />
+        <Skills />
+        <Services />
+        <Qualification />
+        <Work />
+        <Testimonial />
+        <Contact />
       </main>
-      <Footer/>
-      <Scrollup/>
+      <Footer />
+      <Scrollup />
     </>
   );
 }
