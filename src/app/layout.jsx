@@ -1,6 +1,6 @@
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { Analytics } from "@vercel/analytics/next"
-
 export const metadata = {
   title: 'Portfolio',
   description: 'Personal Portfolio Website',
@@ -16,6 +16,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Analytics />
+        <SpeedInsights />
         {children}
       </body>
     </html>
