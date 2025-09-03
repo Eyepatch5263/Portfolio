@@ -14,7 +14,7 @@ export default function NotFound() {
                         It might have been moved, deleted, or you entered the wrong URL.
                     </p>
                     <div className="not-found__actions">
-                        <Link href="/" className="not-found__button not-found__button--primary">
+                        <Link style={{ fontFamily: "cursive" }} href="/" className="not-found__button not-found__button--primary">
                             <i className="uil uil-estate"></i>
                             Go Home
                         </Link>
