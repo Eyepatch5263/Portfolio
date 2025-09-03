@@ -1,6 +1,8 @@
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { Analytics } from "@vercel/analytics/next"
+import { HeroUIProvider } from "@heroui/react";
+
 export const metadata = {
   title: 'Portfolio',
   description: 'Personal Portfolio Website',
@@ -15,9 +17,11 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
       </head>
       <body>
-        <Analytics />
-        <SpeedInsights />
-        {children}
+        <HeroUIProvider>
+          <Analytics />
+          <SpeedInsights />
+          {children}
+        </HeroUIProvider>
       </body>
     </html>
   )

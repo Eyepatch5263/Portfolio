@@ -10,7 +10,7 @@ export default function NotFound() {
                     <div className="not-found__number">404</div>
                     <h1 className="not-found__title">Page Not Found</h1>
                     <p className="not-found__description">
-                        Oops! The page you're looking for doesn't exist.
+                        Oops! The page you&apos;re looking for doesn&apos;t exist.
                         It might have been moved, deleted, or you entered the wrong URL.
                     </p>
                     <div className="not-found__actions">
