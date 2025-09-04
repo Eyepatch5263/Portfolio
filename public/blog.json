@@ -1,0 +1,76 @@
+{
+  "Blog": [
+    {
+      "id": 1,
+      "category": "web",
+      "date": "Jun 19, 2025",
+      "readTime": "35 min read",
+      "title": "Prepare DBMS for Interviews",
+      "excerpt": "Whether you're a budding developer, a curious learner, or someone brushing up on the fundamentals — understanding databases is essential in today's software-driven world..",
+      "url": "https://sypnops.hashnode.dev/series/important-database-concepts"
+    },
+    {
+      "id": 2,
+      "category": "web",
+      "date": "Jun 16, 2025",
+      "readTime": "9 min read",
+      "title": "Mastering Software Architecture Patterns",
+      "excerpt": "Whether you're building a side project, a startup MVP, or a planet-scale system, choosing the right architecture can be the game-changer.",
+      "url": "https://medium.com/@pratyushpragyey/tech-behind-the-scenes-mastering-software-architecture-patterns-b0c53c04b809"
+    },
+    {
+      "id": 3,
+      "category": "web",
+      "date": "Apr 26, 2025",
+      "readTime": "3 min read",
+      "title": "MCP Server (Model Context Protocol) — The Future of AI Automation!",
+      "excerpt": "Welcome to the world of MCP — yes, that magical acronym that's been buzzing around like crazy lately.",
+      "url": "https://medium.com/@pratyushpragyey/mcp-server-model-context-protocol-the-future-of-ai-automation-8d259d569602"
+    },
+    {
+      "id": 4,
+      "category": "web",
+      "date": "Feb 2, 2025",
+      "readTime": "5 min read",
+      "title": "Mastering CI/CD on Digital Ocean with Jenkins",
+      "excerpt": "We will explore the complete CI/CD pipeline using Jenkins on Digital Ocean, covering everything from setting up cloud infrastructure with Terraform.",
+      "url": "https://medium.com/@pratyushpragyey/complete-ci-cd-via-jenkins-on-digital-ocean-part-1-9359ad201ef4"
+    },
+    {
+      "id": 5,
+      "category": "web",
+      "date": "Dec 28, 2024",
+      "readTime": "6 min read",
+      "title": "Setting Up Your Kubernetes Cluster with EC2 Instances or DigitalOcean Droplets",
+      "excerpt": "If you're venturing into Kubernetes land, the first step is setting up a virtual machine (VM) in the cloud. You can use either AWS EC2 Instances or DigitalOcean Droplets.",
+      "url": "https://medium.com/@pratyushpragyey/setting-up-your-kubernetes-cluster-with-ec2-instances-or-digitalocean-droplets-c327e207c490"
+    },
+    {
+      "id": 6,
+      "category": "web",
+      "date": "Dec 20, 2024",
+      "readTime": "12 min read",
+      "title": "Understanding Kubernetes: Basics of K8s and its Architecture",
+      "excerpt": "Kubernetes, often abbreviated as K8s, is an open-source container orchestration platform designed to automate the deployment, scaling, and management of containerized applications.",
+      "url": "https://medium.com/@pratyushpragyey/understanding-kubernetes-basics-of-k8s-and-its-components-part-1-4936b37fbeb5"
+    },
+    {
+      "id": 7,
+      "category": "tech",
+      "date": "Nov 30, 2024",
+      "readTime": "4 min read",
+      "title": "Tired of Manually Setting Up GitHub Repositories? Let's Automate It Like A Pro!",
+      "excerpt": "Let me guess: You've got an idea for the next big project, your fingers are itching to code, but wait — ugh, you need to.",
+      "url": "https://medium.com/@pratyushpragyey/tired-of-manually-setting-up-github-repositories-lets-automate-it-like-a-pro-a960c29be385"
+    },
+    {
+      "id": 8,
+      "category": "tech",
+      "date": "Nov 29, 2024",
+      "readTime": "3 min read",
+      "title": "Unlock the Secret to Downloading YouTube Videos Like a Pro",
+      "excerpt": "Let's be honest — at some point, we've all wanted to download YouTube videos directly to our devices. Whether it's a tutorial, a music video, or just a favorite clip, the idea of having it locally stored is tempting.",
+      "url": "https://medium.com/@pratyushpragyey/unlock-the-secret-to-downloading-youtube-videos-like-a-pro-no-third-party-apps-required-3155e9a89009"
+    }
+  ]
+}
