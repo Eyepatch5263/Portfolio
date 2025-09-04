@@ -116,7 +116,7 @@ export default function BlogPage() {
             <span>5 min read</span>
           </div>
           <h2 className="blog-title">Mastering CI/CD on Digital Ocean with Jenkins</h2>
-          <p className="blog-excerpt">we will explore the complete CI/CD pipeline using Jenkins on Digital Ocean, covering everything from setting up cloud infrastructure with Terraform .</p>
+          <p className="blog-excerpt">We will explore the complete CI/CD pipeline using Jenkins on Digital Ocean, covering everything from setting up cloud infrastructure with Terraform .</p>
           <a target='_blank' href="https://medium.com/@pratyushpragyey/complete-ci-cd-via-jenkins-on-digital-ocean-part-1-9359ad201ef4" className="read-more">Read More</a>
         </div>
       </article>
@@ -132,7 +132,7 @@ export default function BlogPage() {
             <span>6 min read</span>
           </div>
           <h2 className="blog-title">Setting Up Your Kubernetes Cluster with EC2 Instances or DigitalOcean Droplets</h2>
-          <p className="blog-excerpt">If you&aspo;re venturing into Kubernetes land, the first step is setting up a virtual machine (VM) in the cloud. You can use either AWS EC2 Instances or DigitalOcean Droplets.</p>
+          <p className="blog-excerpt">If you&apos;re venturing into Kubernetes land, the first step is setting up a virtual machine (VM) in the cloud. You can use either AWS EC2 Instances or DigitalOcean Droplets.</p>
           <a target='_blank' href="https://medium.com/@pratyushpragyey/setting-up-your-kubernetes-cluster-with-ec2-instances-or-digitalocean-droplets-c327e207c490" className="read-more">Read More</a>
         </div>
       </article>

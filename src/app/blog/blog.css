@@ -25,7 +25,7 @@
         /* Blog Header */
         .blog-header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 2rem;
         }
 
         .blog-header h1 {
@@ -36,7 +36,7 @@
         }
 
         .blog-header p {
-            font-size: 1.2rem;
+            font-size: var(--title-color);
             color: #666;
             max-width: 600px;
             margin: 0 auto;
@@ -92,19 +92,19 @@
             gap: 1rem;
             margin-bottom: 1rem;
             color: #888;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .blog-category {
             background: #f0f0f0;
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #666;
         }
 
         .blog-title {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: #333;
             margin-bottom: 0.75rem;
@@ -113,7 +113,7 @@
 
         .blog-excerpt {
             color: #666;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             line-height: 1.6;
             margin-bottom: 1rem;
         }
@@ -122,20 +122,13 @@
             color: #333;
             text-decoration: none;
             font-weight: 500;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             transition: gap 0.3s ease;
         }
 
-        .read-more:hover {
-            gap: 1rem;
-        }
-
-        .read-more::after {
-            content: '→';
-            font-size: 1.2rem;
-        }
 
         /* Categories Filter */
         .categories-filter {
@@ -148,13 +141,14 @@
         }
 
         .category-btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.45rem 0.9rem;
             border: none;
             background: white;
             border-radius: 25px;
             cursor: pointer;
             font-weight: 500;
             color: #666;
+            font-size: 0.8rem;
             transition: all 0.3s ease;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
@@ -226,13 +220,16 @@
 }
 
         /* Different gradient backgrounds for blog images */
-    .blog-card:nth-child(1) .blog-image { background: linear-gradient(45deg, #313131 0%, #eee 100%); }
-    .blog-card:nth-child(2) .blog-image { background: linear-gradient(45deg, #333 0%, #ccc 100%); }
-    .blog-card:nth-child(3) .blog-image { background: linear-gradient(45deg, #444 0%, #bbb 100%); }
-    .blog-card:nth-child(4) .blog-image { background: linear-gradient(45deg, #555 0%, #aaa 100%); }
-    .blog-card:nth-child(5) .blog-image { background: linear-gradient(45deg, #666 0%, #999 100%); }
-    .blog-card:nth-child(6) .blog-image { background: linear-gradient(45deg, #777 0%, #888 100%); }
-    .blog-card:nth-child(7) .blog-image { background: linear-gradient(45deg, #313131 0%, #eee 100%); }
-    .blog-card:nth-child(8) .blog-image { background: linear-gradient(45deg, #333 0%, #ccc 100%); }
+    .blog-card:nth-child(1) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+    .blog-card:nth-child(2) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+    .blog-card:nth-child(3) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+    .blog-card:nth-child(4) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+    .blog-card:nth-child(5) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+    .blog-card:nth-child(6) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+    .blog-card:nth-child(7) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+    .blog-card:nth-child(8) .blog-image { background: linear-gradient(45deg, #bdbdbd 0%, #eee 100%); }
+
+
+
 
 
