@@ -2,6 +2,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { Analytics } from "@vercel/analytics/next"
 import { HeroUIProvider } from "@heroui/react";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 export const metadata = {
   title: 'Portfolio',
@@ -14,7 +16,6 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="./logo .svg" />
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet' />
-        <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
       </head>
       <body>
         <HeroUIProvider>

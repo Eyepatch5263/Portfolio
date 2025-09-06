@@ -8,9 +8,9 @@ const Data = () => {
                 </svg>
 
             </h1>
-            <h3 className="home__subtitle">
+            <h2 className="home__subtitle">
                 Web Developer
-            </h3>
+            </h2>
             <p className="home__description">
                 I&apos;m a creative designer and Full stack developer based in India. Looking for software developer Role Intern. 
             </p>
