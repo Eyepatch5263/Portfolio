@@ -28,17 +28,17 @@ const Contact = () => {
                     <h3 className="contact__title">Talk To Me</h3>
                     <div className="contact__info">
                         <div className="contact__card">
-                            <i class='bx bx-mail-send contact__card-icon' ></i>
+                            <i className="fas fa-paper-plane contact__card-icon"></i>
                             <h3 className="contact__card-title">Email</h3>
                             <span className="contact__card-data">Pratyushpragyey@gmail.com</span>
 
                             <a href="mailto:pratyushpragyey@gmail.com" className="contact__button">
-                                Write me <i class="uil uil-arrow-right contact__button-icon"></i>
+                                Write me <i class="uil uil-arrow-right contact__card-icon"></i>
                             </a>
                         </div>
 
                         <div className="contact__card">
-                            <i class='bx bxl-whatsapp contact__card-icon' ></i>
+                            <i className="fab fa-whatsapp contact__card-icon"></i>
                             <h3 className="contact__card-title">Whatsapp</h3>
                             <span className="contact__card-data">+91 9263771537</span>
                             <a href="https://api.whatsapp.com/send?phone=9263771537&text=Hello,Pratyush" className="contact__button">
@@ -47,7 +47,7 @@ const Contact = () => {
                         </div>
 
                         <div className="contact__card">
-                            <i class='bx bxl-messenger contact__card-icon' ></i>
+                            <i className="fab fa-facebook-messenger contact__card-icon"></i>
                             <h3 className="contact__card-title">Messenger</h3>
                             <span className="contact__card-data">k pratyush</span>
                             <a href="https://m.me/66bladebreakers" className="contact__button">

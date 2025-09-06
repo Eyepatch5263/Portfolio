@@ -6,7 +6,7 @@ const WorkItems = ({ item }) => {
     return (
         <div>
             <div className="work__card" key={item.id}>
-                <img width={48} height={48} src={item.image} alt={item.title} className='work__img' />
+                <Image width={372} height={312} priority="false" style={{ width: "100%", height: "auto" }} src={item.image} alt={item.title} className='work__img' />
                 <h3 className="work__title">{item.title}</h3>
 
                 <div className="flex gap-2 justify-start items-center">
