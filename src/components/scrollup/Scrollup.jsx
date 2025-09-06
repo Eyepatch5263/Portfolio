@@ -20,9 +20,7 @@ const Scrollup = () => {
     
     return (
         <a href="#" className="scrollup">
-            <i className="uil uil-arrow-up scrollup__icon">
-
-            </i>
+            <i style={{fontSize:"1rem", padding:"0.2rem"}} className="fa fa-arrow-up scrollup__icon" aria-hidden="true" ></i>
         </a>
     )
 }

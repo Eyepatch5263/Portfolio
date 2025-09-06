@@ -1,7 +1,8 @@
 'use client'
-import  { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import './header.css'
 import Image from 'next/image'
+
 export const Header = () => {
 
     //change background header
@@ -33,49 +34,48 @@ export const Header = () => {
                     <ul className="nav__list grid">
                         <li className="nav__item">
                             <a href="#home" onClick={() => { setActiveNav("#home") }} className={activeNav === "#home" ? "nav__link active-link" : "nav__link"}>
-                                <i class="uil uil-estate nav__icon"></i>Home
+                                <i className="fas fa-home nav__icon"></i>Home
                             </a>
                         </li>
                         <li className="nav__item">
                             <a href="#about" className="nav__link">
-                                <i class="uil uil-user nav__icon"></i>About
+                                <i className="fas fa-user nav__icon"></i>About
                             </a>
                         </li>
                         <li className="nav__item">
-                            <a href=" #skills" className="nav__link">
-                                <i class="uil uil-file-info-alt nav__icon"></i>Skills
+                            <a href="#skills" className="nav__link">
+                                <i className="fas fa-file-alt nav__icon"></i>Skills
                             </a>
                         </li>
                         <li className="nav__item">
                             <a href="#services" className="nav__link">
-                                <i class="uil uil-bag nav__icon"></i>Services
+                                <i className="fas fa-briefcase nav__icon"></i>Services
                             </a>
                         </li>
                         <li className="nav__item">
                             <a href="#projects" className="nav__link">
-                                <i class="uil uil-scenery nav__icon"></i>Portfolio
+                                <i className="fas fa-images nav__icon"></i>Portfolio
                             </a>
                         </li>
                         <li className="nav__item">
                             <a href="/blog" className="nav__link">
-                                <i class="uil uil-bing nav__icon"></i>Blog
+                                <i className="fas fa-blog nav__icon"></i>Blog
                             </a>
                         </li>
                         <li className="nav__item">
                             <a onClick={() => { setActiveNav("#contact") }} href="#contact" className="nav__link">
-                                <i class="uil uil-message nav__icon"></i>Contact
+                                <i className="fas fa-envelope nav__icon"></i>Contact
                             </a>
                         </li>
                     </ul>
-                    <i class="uil uil-multiply nav__close" onClick={() => showMenu(!Toggle)} ></i>
+                    <i className="fas fa-times nav__close" onClick={() => showMenu(!Toggle)} ></i>
                 </div>
                 <div className="nav__toggle" onClick={() => showMenu(!Toggle)}>
-                    <i class="uil uil-bars"></i>
+                    <i class="fa fa-bars" aria-hidden="true"></i>
                 </div>
             </nav>
         </header>
     )
 }
-
 
 export default Header

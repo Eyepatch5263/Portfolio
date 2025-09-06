@@ -1,5 +1,4 @@
-import { Button, Link } from "@heroui/react";
-import { Icon } from "@iconify/react";
+"use client"
 import Image from "next/image";
 
 const WorkItems = ({ item }) => {
@@ -10,28 +9,26 @@ const WorkItems = ({ item }) => {
                 <h3 className="work__title">{item.title}</h3>
 
                 <div className="flex gap-2 justify-start items-center">
-                    <Button
-                        as={Link}
+                    <button
                         href={item.link}
                         target="_blank"
                         size="sm"
-                        color="default"
-                        variant="shadow"
-                        style={{ marginRight: "20px" }}
-                        startContent={<Icon icon="lucide:external-link" style={{ marginRight: "4px" }} />}
+
+                        style={{ marginRight: "20px", backgroundColor: "white", fontFamily: "cursive" }}
                     >
+                        <i style={{ marginRight: "4px" }} class="fa fa-link"></i>
                         Demo
-                    </Button>
-                    {item.category == "web" && <Button
-                        as={Link}
+                    </button>
+
+                    {item.category == "web" && <button
+                        style={{ backgroundColor: "white", fontFamily: "cursive" }}
                         href={item.github}
                         target="_blank"
-                        size="sm"
-                        variant="light"
-                        startContent={<Icon icon="logos:github-icon" style={{ marginRight: "4px" }} />}
+
                     >
+                        <i style={{ marginRight: "4px" }} class="fab fa-github"></i>
                         Code
-                    </Button>}
+                    </button>}
                 </div>
             </div>
         </div>
