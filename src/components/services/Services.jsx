@@ -20,12 +20,12 @@ const Services = () => {
                     </div>
 
                     <span className="services__button" onClick={() => toggleTab(1)}>View More
-                        <i class="uil uil-arrow-right services__button-icon"></i>
+                        <i class="fas fa-arrow-right services__button-icon"></i>
                     </span>
 
                     <div className={toggleState === 1 ? "services__modal" : "active__modal"}>
                         <div className="services__modal-content">
-                            <i onClick={() => toggleTab(0)} class="uil uil-times services__modal-close"></i>
+                            <i onClick={() => toggleTab(0)} class="fas fa-times services__modal-close"></i>
                             <h3 className="services__modal-title">
                                 UI/UX Designer.
                             </h3>
@@ -34,27 +34,27 @@ const Services = () => {
                             </p>
                             <ul className="services__modal-services grid">
                                 <li className="services__modal-service">
-                                    <i class="uil uil-check-circle services__modal-icon"></i>
+                                    <i class="fas fa-check-circle services__modal-icon"></i>
                                     <p className="services__modal-info">
                                         Develop user interfaces.
                                     </p>
                                 </li>
 
                                 <li className="services__modal-service">
-                                    <i class="uil uil-check-circle services__modal-icon"></i>
+                                    <i class="fas fa-check-circle services__modal-icon"></i>
                                     <p className="services__modal-info">
                                         Wire Framing.
                                     </p>
                                 </li>
 
                                 <li className="services__modal-service">
-                                    <i class="uil uil-check-circle services__modal-icon"></i>
+                                    <i class="fas fa-check-circle services__modal-icon"></i>
                                     <p className="services__modal-info">
                                         Design and mockups of products for college clubs and Societies.
                                     </p>
                                 </li>
                                 <li className="services__modal-service">
-                                    <i class="uil uil-check-circle services__modal-icon"></i>
+                                    <i class="fas fa-check-circle services__modal-icon"></i>
                                     <p className="services__modal-info">
                                         Designed Logos and custom vectors.
                                     </p>
@@ -71,11 +71,12 @@ const Services = () => {
                         <h3 className="services__title">Web <br /> Developer</h3>
                     </div>
 
-                    <span className="services__button" onClick={() => toggleTab(2)} >View More </span>
-                    <i class="uil uil-arrow-right services__button-icon"></i>
+                    <span onClick={() => toggleTab(2)} className="services__button"  >View More
+                        <i class="fas fa-arrow-right services__button-icon"></i>
+                    </span>
                     <div className={toggleState === 2 ? "services__modal" : "active__modal"}>
                         <div className="services__modal-content">
-                            <i onClick={() => { toggleTab(0) }} class="uil uil-times services__modal-close"></i>
+                            <i onClick={() => { toggleTab(0) }} class="fas fa-times services__modal-close"></i>
                             <h3 className="services__modal-title">
                                 Web Developer
                             </h3>
@@ -121,11 +122,12 @@ const Services = () => {
                         <h3 className="services__title">App <br /> Developer</h3>
                     </div>
 
-                    <span className="services__button" onClick={() => { toggleTab(3) }}>View More </span>
-                    <i class="uil uil-arrow-right services__button-icon"></i>
+                    <span onClick={() => { toggleTab(3) }} className="services__button" >View More
+                        <i class="fas fa-arrow-right services__button-icon"></i>
+                    </span>
                     <div className={toggleState === 3 ? "services__modal" : "active__modal"}>
                         <div className="services__modal-content">
-                            <i onClick={() => { toggleTab(0) }} class="uil uil-times services__modal-close"></i>
+                            <i onClick={() => { toggleTab(0) }} class="fas fa-times services__modal-close"></i>
                             <h3 className="services__modal-title">
                                 App Developer
                             </h3>
@@ -143,7 +145,7 @@ const Services = () => {
                                 <li className="services__modal-service">
                                     <i class="uil uil-check-circle services__modal-icon"></i>
                                     <p className="services__modal-info">
-                                        UI/UX Designer.
+                                        Follows solid principle for app architecture
                                     </p>
                                 </li>
 

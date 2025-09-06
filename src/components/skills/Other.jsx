@@ -9,7 +9,7 @@ const Other = () => {
                     <div className="skills__group">
 
                         <div className="skills__data">
-                            <i class='bx bx-badge-check' ></i>
+                            <i className="fas fa-check-circle"></i>
                             <div>
                                 <h3 className="skills__name">Git and Github</h3>
                                 <span className="skills__level">Intermediate</span>
@@ -17,7 +17,7 @@ const Other = () => {
                         </div>
 
                         <div className="skills__data">
-                            <i class='bx bx-badge-check' ></i>
+                            <i className="fas fa-check-circle"></i>
                             <div>
                                 <h3 className="skills__name">Postman</h3>
                                 <span className="skills__level">Intermediate</span>
@@ -27,7 +27,7 @@ const Other = () => {
 
 
                         <div className="skills__data">
-                            <i class='bx bx-badge-check' ></i>
+                            <i className="fas fa-check-circle"></i>
                             <div>
                                 <h3 className="skills__name">Software Architecture Patterns</h3>
                                 <span className="skills__level">Basic</span>
@@ -38,7 +38,7 @@ const Other = () => {
                     <div className="skills__group">
 
                         <div className="skills__data">
-                            <i class='bx bx-badge-check' ></i>
+                            <i className="fas fa-check-circle"></i>
                             <div>
                                 <h3 className="skills__name">Prompt Engineering</h3>
                                 <span className="skills__level">Basic</span>
@@ -46,7 +46,7 @@ const Other = () => {
                         </div>
 
                         <div className="skills__data">
-                            <i class='bx bx-badge-check' ></i>
+                            <i className="fas fa-check-circle"></i>
                             <div>
                                 <h3 className="skills__name">Networking</h3>
                                 <span className="skills__level">Intermediate</span>
@@ -54,7 +54,7 @@ const Other = () => {
                         </div>
 
                         <div className="skills__data">
-                            <i class='bx bx-badge-check' ></i>
+                            <i className="fas fa-check-circle"></i>
                             <div>
                                 <h3 className="skills__name">System Design</h3>
                                 <span className="skills__level">Basic</span>
