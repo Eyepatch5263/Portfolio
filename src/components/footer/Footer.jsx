@@ -17,7 +17,7 @@ const Footer = () => {
                     </li>
                 </ul>
                 <div className="footer__social">
-                    <a href="https://www.instagram.com/eyepatch_5263/" className="footer__social-link" target='_blank'>
+                    <a href="https://www.instagram.com/eyepatch_5263/" className="footer__social-link" target='_blank' aria-label='Instagram'>
                         <i class="fab fa-instagram"></i>
                     </a>
                     <a href="https://www.linkedin.com/in/pratyush-pragyey-7a95a7258/" className="footer__social-link" target='_blank' aria-label="LinkedIn">
