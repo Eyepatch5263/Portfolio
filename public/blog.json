@@ -1,5 +1,13 @@
 {
-  "Blog": [
+  "Blog": [{
+      "id":0,
+      "category":"web",
+      "date":"Sept 5 2025",
+      "readTime":"11 min read",
+      "title":"Designing a Rate Limiter: Concepts, Algorithms, and System Design",
+      "excerpt":"In modern network systems, rate limiting plays a crucial role in ensuring system stability and security. At its core, a rate limiter controls the amount of traffic sent by a client or service within a defined span of time.",
+      "url":"https://medium.com/@pratyushpragyey/designing-a-rate-limiter-concepts-algorithms-and-system-design-da7f739ec0a7"
+    },
     {
       "id": 1,
       "category": "web",
