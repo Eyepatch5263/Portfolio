@@ -6,7 +6,7 @@
 
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: Georgia, 'Times New Roman', Times, serif;
             background-color: rgb(247, 247, 247);
             color: var(--text-color);
             font-family: Georgia, 'Times New Roman', Times, serif;
@@ -132,7 +132,7 @@
 
         /* Categories Filter */
         .categories-filter {
-            font-family: 'Times New Roman', Times, serif;
+            font-family: Georgia, 'Times New Roman', Times, serif;
             display: flex;
             justify-content: center;
             gap: 1rem;

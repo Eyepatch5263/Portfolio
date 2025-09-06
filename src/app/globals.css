@@ -86,7 +86,7 @@ textarea {
 body {
   background-color: rgb(247, 247, 247);
   color: var(--text-color);
-  font-family:cursive
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 h1,
