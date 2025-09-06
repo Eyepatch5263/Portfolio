@@ -14,14 +14,14 @@ const WorkItems = ({ item }) => {
                         target="_blank"
                         size="sm"
 
-                        style={{ marginRight: "20px", backgroundColor: "white", fontFamily: "cursive" }}
+                        style={{ marginRight: "20px", backgroundColor: "white", fontFamily:"sans-serif" }}
                     >
                         <i style={{ marginRight: "4px" }} class="fa fa-link"></i>
                         Demo
                     </button>
 
                     {item.category == "web" && <button
-                        style={{ backgroundColor: "white", fontFamily: "cursive" }}
+                        style={{ backgroundColor: "white", fontFamily: "sans-serif" }}
                         href={item.github}
                         target="_blank"
 
