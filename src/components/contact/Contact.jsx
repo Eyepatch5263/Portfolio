@@ -13,7 +13,7 @@ const Contact = () => {
 
         emailjs
             .sendForm('service_w0cfhe8', 'template_r2zgn7j', form.current, {
-                publicKey: 'FRSvPvXAc-wWrwKh2',
+                publicKey: 'KOtxo9zF_y5WgpcJe',
             })
         e.target.reset()
     };
@@ -30,8 +30,8 @@ const Contact = () => {
                         <div className="contact__card">
                             <i class='bx bx-mail-send contact__card-icon' ></i>
                             <h3 className="contact__card-title">Email</h3>
-                                <span className="contact__card-data">Pratyushpragyey@gmail.com</span>
-                            
+                            <span className="contact__card-data">Pratyushpragyey@gmail.com</span>
+
                             <a href="mailto:pratyushpragyey@gmail.com" className="contact__button">
                                 Write me <i class="uil uil-arrow-right contact__button-icon"></i>
                             </a>

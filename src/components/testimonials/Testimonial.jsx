@@ -1,8 +1,8 @@
 'use client'
-import React from 'react'
 import './testimonial.css'
 import { Data } from './Data'
 import {Swiper,SwiperSlide} from 'swiper/react'
+import Image from 'next/image' 
 
 import "swiper/css"
 import "swiper/css/pagination"
@@ -35,7 +35,7 @@ const Testimonial = () => {
                 {Data.map(({id,image,title,description})=>{
                     return (
                         <SwiperSlide className='testimonial__card' key={id}>
-                            <img  width={100} height={100} className='testimonial__img' src={image} alt={title}/>
+                            <Image loading='lazy'  width={100} height={100} className='testimonial__img' src={image} alt={title}/>
                             <h3 className="testimonial__name">{title}</h3>
                             <p className="testimonial__description">
                                 {description}

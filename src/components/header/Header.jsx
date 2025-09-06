@@ -1,6 +1,7 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import  { useState, useEffect } from 'react'
 import './header.css'
+import Image from 'next/image'
 export const Header = () => {
 
     //change background header
@@ -26,7 +27,7 @@ export const Header = () => {
         <header className="header">
             <nav className="nav container">
                 <a href="index.html" className="nav_logo">
-                    <img alt='logo' src="/logo.jpg" style={{ width: "48px", paddingTop: "0.5rem" }} />
+                    <Image height={48} width={48} alt='logo' src="/logo.webp" style={{ width: "48px", paddingTop: "0.5rem" }} />
                 </a>
                 <div className={Toggle ? "nav__menu  show-menu" : "nav__menu"}>
                     <ul className="nav__list grid">

@@ -1,12 +1,12 @@
-import React from 'react'
 import { Button, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 
 const WorkItems = ({ item }) => {
     return (
         <div>
             <div className="work__card" key={item.id}>
-                <img src={item.image} alt={item.title} className='work__img' />
+                <img width={48} height={48} src={item.image} alt={item.title} className='work__img' />
                 <h3 className="work__title">{item.title}</h3>
 
                 <div className="flex gap-2 justify-start items-center">
