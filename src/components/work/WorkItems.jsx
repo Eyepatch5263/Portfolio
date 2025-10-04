@@ -9,26 +9,27 @@ const WorkItems = ({ item }) => {
                 <h3 className="work__title">{item.title}</h3>
 
                 <div className="flex gap-2 justify-start items-center">
-                    <button
+                    <a
                         href={item.link}
                         target="_blank"
-                        size="sm"
-
-                        style={{ marginRight: "20px", backgroundColor: "white", fontFamily: "serif" }}
+                        rel="noopener noreferrer"
+                        style={{ marginRight: "20px", backgroundColor: "white", fontFamily: "serif", padding: "6px 12px", borderRadius: "4px", display: "inline-block", textDecoration: "none", color: "inherit" }}
                     >
-                        <i style={{ marginRight: "4px" }} class="fa fa-link"></i>
+                        <i style={{ marginRight: "4px" }} className="fa fa-link"></i>
                         Demo
-                    </button>
+                    </a>
 
-                    {item.category == "web" && <button
-                        style={{ backgroundColor: "white", fontFamily: "serif" }}
-                        href={item.github}
-                        target="_blank"
-
-                    >
-                        <i style={{ marginRight: "4px" }} class="fab fa-github"></i>
-                        Code
-                    </button>}
+                    {item.category == "web" && (
+                        <a
+                            href={item.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ backgroundColor: "white", fontFamily: "serif", padding: "6px 12px", borderRadius: "4px", display: "inline-block", textDecoration: "none", color: "inherit" }}
+                        >
+                            <i style={{ marginRight: "4px" }} className="fab fa-github"></i>
+                            Code
+                        </a>
+                    )}
                 </div>
             </div>
         </div>
