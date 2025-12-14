@@ -1,0 +1,832 @@
+---
+title: "Designing a Rate Limiter: Concepts, Algorithms, and System Design"
+excerpt: "A comprehensive guide to understanding rate limiting, its concepts, algorithms, and system design for building scalable APIs."
+date: "2025-09-06"
+tags: ["Rate Limiting", "System Design", "Algorithms", "Backend"]
+published: true
+---
+
+![Rate Limiter](/rate-limiter.jpeg)
+
+In modern network systems, rate limiting plays a crucial role in ensuring system stability and security. At its core, a rate limiter controls the amount of traffic sent by a client or service within a defined span of time.
+
+In simpler terms, it defines how many requests a client is allowed to send to a server or API within a given timeframe. If the number of requests exceeds the defined threshold, further requests are either blocked, delayed, or dropped.
+
+## Simple Examples
+
+- A user can't post more than 2 posts within 3 seconds.
+- A user can't create more than 10 accounts in a day.
+
+This mechanism protects systems from resource starvation caused by unintentional overuse or malicious attacks such as Distributed Denial of Service (DDoS). Almost every large-scale company — Google, Facebook, Twitter, Stripe, Amazon — employs some form of rate limiting to ensure their infrastructure is safe, reliable, and cost-effective.
+
+---
+
+## Key Requirements for a Good Rate Limiter
+
+An effective rate limiter should:
+
+- **Accurately enforce limits** on excessive requests.
+- **Add minimal latency**, so it doesn't slow down HTTP response times.
+- **Consume little memory** for scalability.
+- **Work across distributed systems**, supporting multiple servers and processes.
+- **Provide clear feedback** to users via meaningful exceptions (e.g., HTTP 429 Too Many Requests).
+
+---
+
+## Where to Place a Rate Limiter
+
+Rate limiting can be implemented on both the client side and the server side. However, server-side rate limiting is more reliable because client-side checks can be easily bypassed by malicious actors.
+
+<Mermaid chart={`flowchart LR
+    client["Client"]
+    limiter["Rate
+    Limiter"]
+    
+    subgraph servers["API Servers"]
+        s1["Server"]
+        s2["Server"]
+        s3["Server"]
+        s4["Server"]
+        s5["Server"]
+        s6["Server"]
+    end
+    
+    client --> limiter
+    limiter --> servers
+    
+    style client fill:#f9c74f,stroke:#f9844a
+    style limiter fill:#6c757d,stroke:#495057,color:#fff
+    style s1 fill:#2a9d8f,stroke:#264653
+    style s2 fill:#2a9d8f,stroke:#264653
+    style s3 fill:#2a9d8f,stroke:#264653
+    style s4 fill:#2a9d8f,stroke:#264653
+    style s5 fill:#2a9d8f,stroke:#264653
+    style s6 fill:#2a9d8f,stroke:#264653
+`} />
+
+### Rate Limiter as Middleware
+
+In most real-world systems, rate limiters are placed:
+
+- **As middleware** — throttles requests before reaching APIs.
+- **Inside an API Gateway** — which often provides additional features like authentication, SSL termination, IP whitelisting, and static content delivery.
+
+But there is no absolute answer whether the rate limiter should be at server side or as middleware. It all depends on the technology stack, engineering resources, and priorities.
+
+Ultimately, the choice depends on architecture and priorities:
+
+- In **monolithic setups**, middleware might be sufficient.
+- In **microservices architectures**, API gateways are the preferred choice since they already centralize traffic management.
+
+**Rate Limiter Blocking Requests:**
+
+<Mermaid chart={`flowchart LR
+    client["Client"]
+    
+    req1["1st request"]
+    req2["2nd request"]
+    req3["3rd request"]
+    blocked["X Blocked"]
+    
+    limiter["Rate
+    Limiter"]
+    
+    subgraph servers["API Servers"]
+        s1["Server"]
+        s2["Server"]
+        s3["Server"]
+        s4["Server"]
+        s5["Server"]
+        s6["Server"]
+    end
+    
+    client --> req1
+    client --> req2
+    client --> req3
+    req1 --> limiter
+    req2 --> limiter
+    req3 -.-> blocked
+    limiter --> servers
+    
+    style client fill:#f9c74f,stroke:#f9844a
+    style limiter fill:#6c757d,stroke:#495057,color:#fff
+    style blocked fill:#e63946,stroke:#d62828,color:#fff
+    style req1 fill:#fff,stroke:#333
+    style req2 fill:#fff,stroke:#333
+    style req3 fill:#fff,stroke:#333
+    style s1 fill:#2a9d8f,stroke:#264653
+    style s2 fill:#2a9d8f,stroke:#264653
+    style s3 fill:#2a9d8f,stroke:#264653
+    style s4 fill:#2a9d8f,stroke:#264653
+    style s5 fill:#2a9d8f,stroke:#264653
+    style s6 fill:#2a9d8f,stroke:#264653
+`} />
+
+---
+
+## Popular Algorithms for Rate Limiting
+
+There is no one-size-fits-all algorithm. Each approach has trade-offs depending on accuracy, memory usage, and tolerance for burst traffic. Let's look at the most widely used ones.
+
+### 1. Token Bucket Algorithm
+
+Widely used by companies like Amazon and Stripe, the Token Bucket algorithm is one of the most popular approaches.
+
+**How it works:**
+
+1. A bucket holds tokens.
+2. A refiller adds tokens at a fixed rate (e.g., 3 tokens per second).
+3. Each incoming request consumes one token.
+4. If no tokens are available, requests are dropped until tokens are replenished.
+5. Extra tokens are discarded if the bucket is full.
+
+<Mermaid chart={`flowchart TB
+    refiller["Refiller
+    Filling the Tokens"]
+    
+    subgraph incoming["Incoming Requests"]
+        r1(("Request 1"))
+        r2(("Request 2"))
+        r4(("Request 4"))
+    end
+    
+    subgraph bucketArea["Token Bucket"]
+        bucket[("Bucket")]
+        check{"Enough
+        Tokens?"}
+    end
+    
+    subgraph forwarded["Request Forwarded"]
+        f1(("Request 1"))
+        f2(("Request 2"))
+    end
+    
+    subgraph dropped["Packets Dropped"]
+        d4(("Request 4"))
+    end
+    
+    refiller --> bucket
+    incoming --> check
+    bucket --> check
+    check -->|Yes| forwarded
+    check -->|No| dropped
+    
+    style incoming fill:#f9c74f,stroke:#f9844a
+    style bucketArea fill:#fef9c3,stroke:#d4a574,stroke-dasharray:5,5
+    style forwarded fill:#2a9d8f,stroke:#264653
+    style dropped fill:#e63946,stroke:#d62828
+    style r1 fill:#6c757d,stroke:#495057,color:#fff
+    style r2 fill:#6c757d,stroke:#495057,color:#fff
+    style r4 fill:#6c757d,stroke:#495057,color:#fff
+    style f1 fill:#6c757d,stroke:#495057,color:#fff
+    style f2 fill:#6c757d,stroke:#495057,color:#fff
+    style d4 fill:#6c757d,stroke:#495057,color:#fff
+`} />
+
+**Parameters:**
+
+- **Bucket size** — maximum number of tokens.
+- **Refill rate** — how many tokens are added per time unit.
+
+**Use Cases:**
+
+- Per-user, per-endpoint, or per-IP throttling.
+- Global system-wide rate limits.
+
+| Pros | Cons |
+|------|------|
+| Easy to implement | Requires careful tuning of bucket size and refill rate |
+| Memory efficient | |
+| Allows short bursts of traffic | |
+
+---
+
+### 2. Leaking Bucket Algorithm
+
+Similar to the token bucket but with fixed-rate request processing. It is typically implemented with a queue.
+
+**How it works:**
+
+1. Requests enter the queue.
+2. If the queue is full, requests are dropped.
+3. Requests exit at a fixed rate regardless of bursts.
+
+<Mermaid chart={`flowchart TB
+    subgraph incoming["Incoming Requests"]
+        direction LR
+        r1(("Request 1"))
+        r2(("Request 2"))
+        r3(("Request 3"))
+        r4(("Request 4"))
+    end
+    
+    subgraph queue["Queue"]
+        direction TB
+        q3["R3"]
+        q2["R2"]
+        q1["R1"]
+    end
+    
+    subgraph forwarded["Request Forwarded"]
+        f1(("Request 1"))
+        f2(("Request 2"))
+        f3(("Request 3"))
+    end
+    
+    subgraph dropped["Packets Dropped"]
+        d4(("Request 4"))
+    end
+    
+    incoming --> queue
+    queue -->|"Request Forwarded"| forwarded
+    queue --> dropped
+    
+    style incoming fill:#f9c74f,stroke:#f9844a
+    style queue fill:#fef9c3,stroke:#d4a574,stroke-dasharray:5,5
+    style forwarded fill:#2a9d8f,stroke:#264653
+    style dropped fill:#e63946,stroke:#d62828
+    style q1 fill:#2a9d8f,stroke:#264653,color:#fff
+    style q2 fill:#2a9d8f,stroke:#264653,color:#fff
+    style q3 fill:#2a9d8f,stroke:#264653,color:#fff
+    style r1 fill:#6c757d,stroke:#495057,color:#fff
+    style r2 fill:#6c757d,stroke:#495057,color:#fff
+    style r3 fill:#6c757d,stroke:#495057,color:#fff
+    style r4 fill:#6c757d,stroke:#495057,color:#fff
+    style f1 fill:#6c757d,stroke:#495057,color:#fff
+    style f2 fill:#6c757d,stroke:#495057,color:#fff
+    style f3 fill:#6c757d,stroke:#495057,color:#fff
+    style d4 fill:#6c757d,stroke:#495057,color:#fff
+`} />
+
+**Parameters:**
+
+- **Bucket size** (queue length).
+- **Outflow rate** (requests/sec).
+
+**Use Cases:**
+
+- Systems requiring stable, predictable request processing.
+- Shopify uses this approach.
+
+| Pros | Cons |
+|------|------|
+| Memory efficient | Bursts can clog the queue with old requests |
+| Smooths out traffic spikes | Newer requests may get unfairly dropped |
+
+---
+
+### 3. Fixed Window Counter
+
+In this algorithm the timeline is divided into fixed-sized time windows, and a counter is assigned to each window. Each request increments the counter by one. Once the counter reaches the pre-defined threshold, further requests are dropped until a new time window starts.
+
+**How it works:**
+
+Within a certain time of 1 second, if we have a threshold of only 3, it will process only 3 requests and will block further ones until the time window resets.
+
+<Mermaid chart={`flowchart TB
+    subgraph w1["1:00:03"]
+        r1a["Request 1"]
+        r2a["Request 2"]
+        r3a["Request 3"]
+        r4a["Request 4"]
+    end
+    
+    subgraph w2["1:00:02"]
+        r1c["Request 1"]
+        r2c["Request 2"]
+    end
+
+     subgraph w3["1:00:01"]
+        r1b["Request 1"]
+        r2b["Request 2"]
+        r3b["Request 3"]
+        r4b["Request 4"]
+        r5b["Request 5"]
+    end
+    
+    subgraph w4["1:00:00"]
+        r1d["Request 1"]
+        r2d["Request 2"]
+        r3d["Request 3"]
+        r4d["Request 4"]
+    end
+    
+    style r1a fill:#2a9d8f,stroke:#264653,color:#fff
+    style r2a fill:#2a9d8f,stroke:#264653,color:#fff
+    style r3a fill:#2a9d8f,stroke:#264653,color:#fff
+    style r4a fill:#e5e5e5,stroke:#999,stroke-dasharray:5,5
+    
+    style r1b fill:#2a9d8f,stroke:#264653,color:#fff
+    style r2b fill:#2a9d8f,stroke:#264653,color:#fff
+    style r3b fill:#2a9d8f,stroke:#264653,color:#fff
+    style r4b fill:#e5e5e5,stroke:#999,stroke-dasharray:5,5
+    style r5b fill:#e5e5e5,stroke:#999,stroke-dasharray:5,5
+    
+    style r1c fill:#2a9d8f,stroke:#264653,color:#fff
+    style r2c fill:#2a9d8f,stroke:#264653,color:#fff
+    
+    style r1d fill:#2a9d8f,stroke:#264653,color:#fff
+    style r2d fill:#2a9d8f,stroke:#264653,color:#fff
+    style r3d fill:#2a9d8f,stroke:#264653,color:#fff
+    style r4d fill:#e5e5e5,stroke:#999,stroke-dasharray:5,5
+`} />
+
+**Legend:** Teal = Accepted (within threshold) | Gray dashed = Dropped (exceeded threshold of 3)
+
+**The Edge Case Problem:**
+
+Consider a threshold of 5 requests within a minute. Looking at time windows between 2:00:00–2:01:00 and 2:01:00–2:02:00, we have 5 requests in each bucket. But when we consider the window from 2:00:30 to 2:01:30, we have 10 requests within a minute — which exceeds our threshold.
+
+<Mermaid chart={`flowchart LR
+    subgraph timeline["Timeline"]
+        t1["2:00:00"]
+        t2["2:00:30"]
+        t3["2:01:00"]
+        t4["2:01:30"]
+        t5["2:02:00"]
+    end
+    
+    subgraph sliding["Sliding Window (2:00:30 - 2:01:30)"]
+        subgraph left["Before 2:01:00"]
+            l1["Req"]
+            l2["Req"]
+            l3["Req"]
+            l4["Req"]
+            l5["Req"]
+        end
+        
+        subgraph right["After 2:01:00"]
+            r1["Req"]
+            r2["Req"]
+            r3["Req"]
+            r4["Req"]
+            r5["Req"]
+        end
+    end
+    
+    style sliding fill:#f5f5f5,stroke:#999,stroke-dasharray:5,5
+    style l1 fill:#2a9d8f,stroke:#264653,color:#fff
+    style l2 fill:#2a9d8f,stroke:#264653,color:#fff
+    style l3 fill:#2a9d8f,stroke:#264653,color:#fff
+    style l4 fill:#2a9d8f,stroke:#264653,color:#fff
+    style l5 fill:#2a9d8f,stroke:#264653,color:#fff
+    style r1 fill:#2a9d8f,stroke:#264653,color:#fff
+    style r2 fill:#2a9d8f,stroke:#264653,color:#fff
+    style r3 fill:#2a9d8f,stroke:#264653,color:#fff
+    style r4 fill:#2a9d8f,stroke:#264653,color:#fff
+    style r5 fill:#2a9d8f,stroke:#264653,color:#fff
+`} />
+
+This shows how 5 requests at 2:00:30 and 5 requests at 2:01:30 can bypass the threshold when viewed across a sliding window.
+
+| Pros | Cons |
+|------|------|
+| Simple and memory efficient | Prone to edge spikes |
+| Works well for certain time-based use cases | A client can send 5 requests at 2:00:59 and 5 at 2:01:01, effectively 10 requests in 2 seconds |
+
+---
+
+### 4. Sliding Window Log
+
+A more accurate solution that eliminates the spike problem.
+
+**How it works:**
+
+1. The algorithm keeps track of request timestamps (usually kept in cache).
+2. When a new request comes in, remove all outdated timestamps (those older than the start of the current time window).
+3. Add timestamp of the new request to the log.
+4. If the log size is same or lower than the threshold, the request is accepted; else rejected.
+
+**Example with 2 requests per minute limit:**
+
+1. The log is empty when a new request arrives at 1:00:01 — request is allowed.
+2. A new request arrives at 1:00:30, timestamp is inserted. Log size is 2 (threshold).
+3. A request arrives at 1:00:50 — log size becomes 3 (exceeds threshold), request is discarded.
+4. A new request arrives at 1:01:40. Requests before 1:00:40 are outdated and removed. Log size becomes 2, request is accepted.
+
+<Mermaid chart={`flowchart TB
+    subgraph f1["Step 1"]
+        req1["1:00:01"]
+        log1["1:00:01"]
+        s1["Success"]
+        req1 --> log1 --> s1
+    end
+    
+    subgraph f2["Step 2"]
+        req2["1:00:30"]
+        log2a["1:00:01"]
+        log2b["1:00:30"]
+        s2["Success"]
+        req2 --> log2a
+        req2 --> log2b
+        log2a --> s2
+        log2b --> s2
+    end
+    
+    subgraph f3["Step 3"]
+        req3["1:00:50"]
+        log3a["1:00:01"]
+        log3b["1:00:30"]
+        log3c["1:00:50"]
+        fail["Failure"]
+        req3 --> log3a --> fail
+        req3 --> log3b --> fail
+        req3 --> log3c --> fail
+    end
+    
+    subgraph f4["Step 4"]
+        req4["1:01:40"]
+        log4a["1:00:50"]
+        log4b["1:01:40"]
+        s4["Success"]
+        req4 --> log4a --> s4
+        req4 --> log4b --> s4
+    end
+    
+    style s1 fill:#2a9d8f,stroke:#264653,color:#fff
+    style s2 fill:#2a9d8f,stroke:#264653,color:#fff
+    style s4 fill:#2a9d8f,stroke:#264653,color:#fff
+    style fail fill:#e63946,stroke:#d62828,color:#fff
+`} />
+
+**Note:** At 1:01:40, timestamps 1:00:01 and 1:00:30 are removed as they're outside the sliding window.
+
+| Pros | Cons |
+|------|------|
+| Very accurate for rolling windows | High memory usage since every timestamp must be stored |
+
+---
+
+### 5. Sliding Window Counter
+
+A hybrid between Fixed Window and Sliding Log.
+
+**How it works:**
+
+<Mermaid chart={`flowchart TB
+    subgraph overlap["Rolling Window"]
+        o1["70%"]
+        o2["30%"]
+    end
+    
+    subgraph prev["Previous Min (5 req)"]
+        p1["Req"]
+        p2["Req"]
+        p3["Req"]
+        p4["Req"]
+        p5["Req"]
+    end
+    
+    subgraph curr["Current Min (3 req)"]
+        c1["Req"]
+        c2["Req"]
+        c3["Req"]
+    end
+    
+    overlap --> prev
+    overlap --> curr
+    
+    style overlap fill:#a8e6cf,stroke:#2a9d8f
+    style prev fill:#e0e0e0,stroke:#999,stroke-dasharray:5,5
+    style curr fill:#bbdefb,stroke:#1976d2,stroke-dasharray:5,5
+    style p1 fill:#455a64,stroke:#263238,color:#fff
+    style p2 fill:#455a64,stroke:#263238,color:#fff
+    style p3 fill:#455a64,stroke:#263238,color:#fff
+    style p4 fill:#455a64,stroke:#263238,color:#fff
+    style p5 fill:#455a64,stroke:#263238,color:#fff
+    style c1 fill:#455a64,stroke:#263238,color:#fff
+    style c2 fill:#455a64,stroke:#263238,color:#fff
+    style c3 fill:#455a64,stroke:#263238,color:#fff
+`} />
+
+Assuming the rate limiter allows a maximum of 7 requests per minute and we have 3 in the current minute:
+
+- Current window: 30% of time elapsed
+- Previous window: 70% overlap with rolling window
+
+**Calculation:**
+
+```
+Requests in rolling window = Current window requests + (Previous window requests × overlap percentage)
+= 3 + (5 × 0.7) = 6.5 ≈ 6 or 7
+```
+
+
+
+**Calculation:** 5 × 70% + 3 = 3.5 + 3 = **6.5 requests** (rounded to 6 or 7)
+
+Since the rate limiter allows 7 requests per minute, the current request can go through.
+
+| Pros | Cons |
+|------|------|
+| Balanced accuracy and memory efficiency | Less precise than sliding log |
+| | Not suitable for ultra-strict limits |
+
+---
+
+## High-Level Architecture
+
+The basic idea is simple: we need a counter to keep track of how many requests are sent from the same user or IP address. If the counter exceeds the limit, the request is discarded.
+
+**Why not use a database?**
+
+Databases are too slow due to disk access. An in-memory cache is chosen because it's fast and supports time-based expiration. **Redis** is a popular option offering:
+
+- `INCR` — Increases the stored counter by 1.
+- `EXPIRE` — Sets a timeout for the counter; if expired, the counter is automatically deleted.
+
+**Request Flow:**
+
+1. Client sends a request to rate limiting middleware.
+2. Middleware fetches the counter value from Redis.
+3. Checks if the limit is reached.
+4. If limit reached → request rejected; else → forwarded to API servers.
+5. Counter is incremented and saved back to Redis.
+
+<Mermaid chart={`flowchart LR
+    client["Client"]
+    limiter["Rate Limiter"]
+    redis[("Redis")]
+    
+    subgraph servers["API Servers"]
+        s1["Server"]
+        s2["Server"]
+        s3["Server"]
+        s4["Server"]
+        s5["Server"]
+        s6["Server"]
+    end
+    
+    client --> limiter
+    limiter --> servers
+    limiter <--> redis
+    
+    style client fill:#f9c74f,stroke:#f9844a
+    style limiter fill:#6c757d,stroke:#495057,color:#fff
+    style redis fill:#e63946,stroke:#d62828,color:#fff
+    style s1 fill:#2a9d8f,stroke:#264653
+    style s2 fill:#2a9d8f,stroke:#264653
+    style s3 fill:#2a9d8f,stroke:#264653
+    style s4 fill:#2a9d8f,stroke:#264653
+    style s5 fill:#2a9d8f,stroke:#264653
+    style s6 fill:#2a9d8f,stroke:#264653
+`} />
+
+---
+
+## Defining Rules
+
+Rate limits are often defined in configuration files. Example using Lyft's open-source rate limiting component:
+
+```yaml
+domain: messaging
+descriptors:
+  - key: message_type
+    value: sales
+    rate_limit:
+      unit: day
+      requests_per_unit: 5
+```
+
+This allows a maximum of 5 sales messages per day.
+
+```yaml
+domain: auth
+descriptors:
+  - key: auth_type
+    value: login
+    rate_limit:
+      unit: minute
+      requests_per_unit: 5
+```
+
+This prevents more than 5 login attempts within a minute.
+
+---
+
+## Rate Limiter Headers
+
+How does a client know that the request is being throttled? The answer lies in HTTP headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-Ratelimit-Remaining` | Remaining allowed requests within the window |
+| `X-Ratelimit-Limit` | Total calls allowed per time window |
+| `X-Ratelimit-Retry-After` | Seconds to wait before making another request |
+
+When a user has sent too many requests, a **429 (Too Many Requests)** error and `X-Ratelimit-Retry-After` header are returned.
+
+---
+
+## Detailed Design
+
+1. **Rules** are stored on disk.
+2. **Workers** frequently pull rules from disk and store them in cache.
+3. **Client sends a request** to the rate limiter middleware.
+4. **Middleware loads rules** from cache and fetches counters/timestamps from Redis.
+5. **Decision:**
+   - If not rate limited → forward to API server.
+   - If rate limited → return 429 error; optionally queue the request for later processing.
+
+<Mermaid chart={`flowchart TB
+    rules["Rules"]
+    
+    subgraph workers["Workers"]
+        w1["Worker"]
+        w2["Worker"]
+        w3["Worker"]
+    end
+    
+    cache["Cache"]
+    client["Client"]
+    limiter["Rate Limiter"]
+    redis[("Redis")]
+    
+    subgraph servers["API Servers"]
+        s1["Server"]
+        s2["Server"]
+        s3["Server"]
+    end
+    
+    dropped(["Request Dropped"])
+    queue["Message Queue"]
+    
+    rules <--> workers <--> cache
+    client --> limiter
+    limiter --> servers
+    limiter <--> cache
+    limiter <--> redis
+    limiter -.->|"HTTP 429"| client
+    limiter -.->|"Option 1"| dropped
+    limiter -.->|"Option 2"| queue
+    
+    style client fill:#f9c74f,stroke:#f9844a
+    style limiter fill:#6c757d,stroke:#495057,color:#fff
+    style cache fill:#455a64,stroke:#263238,color:#fff
+    style redis fill:#e63946,stroke:#d62828,color:#fff
+    style rules fill:#fef9c3,stroke:#d4a574
+    style dropped fill:#e63946,stroke:#d62828,color:#fff
+    style queue fill:#455a64,stroke:#263238,color:#fff
+    style s1 fill:#2a9d8f,stroke:#264653
+    style s2 fill:#2a9d8f,stroke:#264653
+    style s3 fill:#2a9d8f,stroke:#264653
+    style w1 fill:#2a9d8f,stroke:#264653
+    style w2 fill:#2a9d8f,stroke:#264653    
+    style w3 fill:#2a9d8f,stroke:#264653
+`} />
+
+---
+
+## Rate Limiter in Distributed Systems
+
+Building a rate limiter for a single server is straightforward. Scaling to multiple servers introduces challenges:
+
+### 1. Race Condition
+
+**The Problem:**
+
+1. Read the counter value from Redis.
+2. Check if (counter + 1) exceeds the threshold.
+3. If not, increment the counter by 1.
+
+If two requests concurrently read the counter (value: 3) before either writes back, both will increment to 4. But the counter should be 5.
+
+<Mermaid chart={`flowchart TB
+    subgraph req1["Request 1"]
+        r1c1["Counter: 3"]
+        r1read["read_counter"]
+        r1check["Check_and_Increment"]
+        r1c2["Counter: 4"]
+        
+        r1c1 --> r1read --> r1check --> r1c2
+    end
+    
+    subgraph req2["Request 2"]
+        r2c1["Counter: 3"]
+        r2read["read_counter"]
+        r2check["Check_and_Increment"]
+        r2c2["Counter: 4"]
+        
+        r2c1 --> r2read --> r2check --> r2c2
+    end
+    
+    note["*Counter should be: 5"]
+    
+    style req1 fill:#cfd8dc,stroke:#90a4ae
+    style req2 fill:#cfd8dc,stroke:#90a4ae
+    style r1read fill:#fff,stroke:#999,stroke-dasharray:5,5
+    style r1check fill:#fff,stroke:#999,stroke-dasharray:5,5
+    style r2read fill:#fff,stroke:#999,stroke-dasharray:5,5
+    style r2check fill:#fff,stroke:#999,stroke-dasharray:5,5
+    style note fill:#fff,stroke:#fff,color:#e63946
+`} />
+
+**Solutions:**
+
+- **Locks** — Obvious but slow.
+- **Lua Scripts** — Atomic operations in Redis.
+- **Sorted Sets** — Redis data structure for atomic updates.
+
+### 2. Synchronization Across Servers
+
+With millions of users, one rate limiter isn't enough. When multiple rate limiters are used, synchronization is required.
+
+**The Problem:**
+
+- Client 1 sends requests to Rate Limiter 1.
+- Client 2 sends requests to Rate Limiter 2.
+- Since the web tier is stateless, clients can hit different rate limiters.
+- Without synchronization, Rate Limiter 1 has no data about Client 2.
+
+<Mermaid chart={`flowchart LR
+    subgraph stateful["Stateful (Expected)"]
+        c1a["Client 1"]
+        c2a["Client 2"]
+        rl1a{{"Rate Limiter 1"}}
+        rl2a{{"Rate Limiter 2"}}
+        
+        c1a --> rl1a
+        c2a --> rl2a
+    end
+    
+    subgraph stateless["Stateless (Problem)"]
+        c1b["Client 1"]
+        c2b["Client 2"]
+        rl1b{{"Rate Limiter 1"}}
+        rl2b{{"Rate Limiter 2"}}
+        
+        c1b --> rl1b
+        c1b --> rl2b
+        c2b --> rl1b
+        c2b --> rl2b
+    end
+    
+    style c1a fill:#f9c74f,stroke:#f9844a
+    style c2a fill:#f9c74f,stroke:#f9844a
+    style c1b fill:#f9c74f,stroke:#f9844a
+    style c2b fill:#f9c74f,stroke:#f9844a
+    style rl1a fill:#f9c74f,stroke:#f9844a
+    style rl2a fill:#f9c74f,stroke:#f9844a
+    style rl1b fill:#f9c74f,stroke:#f9844a
+    style rl2b fill:#f9c74f,stroke:#f9844a
+    style stateful fill:#cfd8dc,stroke:#90a4ae,stroke-dasharray:5,5
+    style stateless fill:#cfd8dc,stroke:#90a4ae,stroke-dasharray:5,5
+`} />
+
+**Solutions:**
+
+- **Sticky Sessions** — Route client to same rate limiter. Not scalable or flexible.
+- **Centralized Data Store (Redis)** — Better approach. All rate limiters read/write from the same Redis cluster.
+
+<Mermaid chart={`flowchart LR
+    c1["Client 1"]
+    c2["Client 2"]
+    rl1{{"Rate Limiter 1"}}
+    rl2{{"Rate Limiter 2"}}
+    redis[("Redis")]
+    
+    c1 --> rl1
+    c2 --> rl2
+    rl1 --> redis
+    rl2 --> redis
+    
+    style c1 fill:#f9c74f,stroke:#f9844a
+    style c2 fill:#f9c74f,stroke:#f9844a
+    style rl1 fill:#f9c74f,stroke:#f9844a
+    style rl2 fill:#f9c74f,stroke:#f9844a
+    style redis fill:#e63946,stroke:#d62828,color:#fff
+`} />
+
+With **centralized Redis**, both rate limiters share the same data store, ensuring accurate request counts regardless of which rate limiter handles the request.
+
+---
+
+## Monitoring and Analytics
+
+Once deployed, monitoring the rate limiter is critical:
+
+- Ensure rules are not too strict (dropping valid requests).
+- Detect cases where limits are too lenient (letting abuse slip through).
+- Adjust algorithms based on use cases:
+  - **Token Bucket** for burst traffic (e.g., flash sales).
+  - **Leaking Bucket** for stable processing rates.
+
+---
+
+## Algorithm Comparison
+
+| Algorithm | Memory | Accuracy | Burst Handling |
+|-----------|--------|----------|----------------|
+| Token Bucket | Low | Good | Allows bursts |
+| Leaking Bucket | Low | Good | Smooths traffic |
+| Fixed Window | Low | Poor at edges | Edge spikes |
+| Sliding Window Log | High | Excellent | Accurate |
+| Sliding Window Counter | Medium | Good | Balanced |
+
+---
+
+## Conclusion
+
+At the end of the day, a rate limiter isn't just a technical safeguard — it's a way of making your system fair, reliable, and resilient. The right design ensures your APIs stay fast, your servers stay healthy, and your users stay happy.
+
+A well-designed rate limiter is like a quiet hero — unnoticed when everything runs smoothly, but absolutely vital when things go wrong.
