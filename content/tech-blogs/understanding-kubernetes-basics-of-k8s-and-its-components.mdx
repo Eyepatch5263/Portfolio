@@ -1,0 +1,364 @@
+---
+title: "Understanding Kubernetes: Basics of K8s and its Components"
+excerpt: "A comprehensive guide to Kubernetes architecture, control plane, worker nodes, and core components."
+date: "2024-12-20"
+tags: ["Kubernetes", "Container Orchestration", "DevOps", "Cloud"]
+published: true
+---
+
+Kubernetes, often abbreviated as K8s, is an open-source container orchestration platform designed to automate the deployment, scaling, and management of containerized applications. It is an essential tool for managing modern cloud-native applications.
+
+## Why Kubernetes Over Docker?
+
+While Docker revolutionized application development by enabling containerization, it lacked advanced orchestration capabilities. Docker Swarm provided some functionality but fell short in scalability and flexibility. Kubernetes emerged as the preferred solution due to:
+
+- **Scalability**: Handles thousands of containers across multiple nodes with ease
+- **Automation**: Automates container scheduling, scaling, and self-healing
+- **Networking**: Provides robust networking for seamless container communication
+- **Portability**: Cloud-agnostic, allowing workloads to run on any infrastructure
+- **Rich Ecosystem**: Supports ConfigMaps, Secrets, and custom resource definitions (CRDs)
+
+Docker focuses on container creation and management, whereas Kubernetes orchestrates and manages clusters of containers effectively.
+
+## Kubernetes Architecture
+
+Kubernetes follows a client-server architecture comprising the **control plane** and **worker nodes**, which together form the Kubernetes cluster.
+
+<Mermaid chart={`flowchart LR
+    subgraph CLI
+        kubectl["kubectl"]
+    end
+    
+    subgraph cluster["K8s Cluster"]
+        subgraph cp["Control Plane"]
+            api["API Server"]
+            sched["Scheduler"]
+            ctrl["Controller Manager"]
+            etcd["etcd"]
+        end
+        
+        subgraph wn1["Worker Node 1"]
+            kubelet1["Kubelet"]
+            proxy1["Kube-proxy"]
+            pods1["Pods"]
+        end
+        
+        subgraph wn2["Worker Node 2"]
+            kubelet2["Kubelet"]
+            proxy2["Kube-proxy"]
+            pods2["Pods"]
+        end
+        
+    end
+    
+    kubectl -->|"Declarative YAML"| api
+    kubectl -->|"Imperative Commands"| api
+    api --> sched
+    api --> ctrl
+    api --> etcd
+    api --> kubelet1
+    api --> kubelet2
+    
+`} />
+
+**kubectl interacts with the control plane in two ways:**
+1. **Declarative** - through YAML files
+2. **Imperative** - through specific commands
+
+The control plane is the brain of the Kubernetes cluster, managing overall state and operations:
+
+- **API Server**: The front end handling all RESTful API requests and central management point
+- **Scheduler**: Places Pods onto worker nodes based on resource availability and constraints
+- **Controller Manager**: Runs controllers ensuring actual state matches desired state
+- **etcd**: A distributed key-value store holding cluster configuration and state
+
+### Worker Nodes
+
+Worker nodes are machines where application workloads run. Each includes:
+
+- **Kubelet**: Agent communicating with the control plane, ensuring containers run in Pods
+- **Kube-proxy**: Manages network rules and facilitates Pod communication
+- **Container Runtime**: Software running containers (Docker or containerd)
+
+## Inside the Worker Node
+
+<Mermaid chart={`flowchart TB
+    subgraph wn["Worker Node"]
+        subgraph cr["Container Runtime"]
+            subgraph pod["POD"]
+                container["Container"]
+            end
+        end
+    end
+    
+    style wn fill:#f8b4b4,stroke:#e57373
+    style cr fill:#a5d6a7,stroke:#66bb6a
+    style pod fill:#90caf9,stroke:#42a5f5
+    style container fill:#ffcc80,stroke:#ffa726
+`} />
+
+### Containers
+
+Lightweight, portable, isolated application units packaging code and dependencies for consistency across environments.
+
+### Pods
+
+The smallest deployable units in Kubernetes. Each Pod can host one or more tightly coupled containers sharing storage volumes, network namespace, and configuration.
+
+### Container Runtime
+
+The underlying software managing containers on worker nodes, handling lifecycle tasks like starting, stopping, and deleting containers.
+
+---
+
+## Control Plane Deep Dive
+
+<Mermaid chart={`flowchart LR
+    subgraph CLI
+        kubectl["kubectl"]
+    end
+    
+    subgraph cp["Control Plane"]
+        subgraph db["Database"]
+            etcd["etcd"]
+        end
+        sched["Scheduler"]
+        api["API Server"]
+        ctrl["Controller Manager"]
+    end
+    
+    note1["Manages cluster state
+    Holds configuration data and holds the configuration data for the control plane configuration"]
+    note2["Pod allocation based on
+    node availability, Node selection on factors like CPU,
+    memory, network resources"]
+    note3["Central hub for managing
+    cluster resources, handling requests from client and providing single source of truth for cluster state"]
+    note4["Resource allocation, Pod maintenance, Service management, Deployment updates and event handling"]
+    
+    kubectl -.-> api
+    api <-.-> etcd
+    api <-.-> sched
+    api <-.-> ctrl
+    
+    etcd -..- note1
+    sched -..- note2
+    api -..- note3
+    ctrl -..- note4
+    
+    style kubectl fill:#ffcc80,stroke:#ffa726
+    style etcd fill:#fff59d,stroke:#ffee58
+    style sched fill:#ce93d8,stroke:#ab47bc
+    style api fill:#a5d6a7,stroke:#66bb6a
+    style ctrl fill:#f8b4b4,stroke:#e57373
+    style note1 fill:#fce4ec,stroke:#f48fb1
+    style note2 fill:#fce4ec,stroke:#f48fb1
+    style note3 fill:#fce4ec,stroke:#f48fb1
+    style note4 fill:#fce4ec,stroke:#f48fb1
+`} />
+
+### API Server
+
+The API Server uses REST APIs for client interactions, providing a standardized interface for accessing cluster resources.
+
+**Key Responsibilities:**
+- **Resource Management**: Manages Pods, Services, Deployments, PVs, and Namespaces
+- **Request Handling**: Processes kubectl commands and scaling requests
+- **State Management**: Maintains cluster state consistency
+- **Security**: Handles authentication and authorization
+
+**How It Works:**
+1. Receives incoming requests via REST APIs
+2. Checks authentication and authorization
+3. Retrieves current cluster state from etcd
+4. Executes operations and updates etcd
+5. Returns response to client
+
+**Impact of Failure:**
+- Client requests hang until restoration
+- Pods may not be scheduled
+- Services might become unavailable
+
+### Controller Manager
+
+Coordinates and runs controllers to ensure cluster resources match desired state.
+
+**Key Functions:**
+- Resource allocation for controllers and pods
+- Pod lifecycle management (creation, scaling, termination)
+- Service registration with etcd
+- Deployment updates and scaling
+- Event processing for consistency
+
+**Components:**
+- Controller Registry tracking registered controllers
+- Pod Status Update mechanism
+- Service Registration manager
+- Event Handling Loop for continuous processing
+
+### etcd
+
+A distributed, highly available key-value store serving as the core of Kubernetes' control plane.
+
+**Key Roles:**
+- **Cluster State Management**: Stores node information, pod assignments, and cluster state
+- **Leader Election**: Uses Raft consensus algorithm for single leader at a time
+- **Configuration Storage**: Holds control plane configuration data
+
+**Architecture Features:**
+- Leader election among cluster instances
+- Multiple data copies across nodes for high availability
+- Configurable cluster size and election timeout
+
+**Benefits:**
+- High availability during node failures
+- Easy scalability by adding instances
+- Centralized configuration management
+
+**Challenges:**
+- Adds complexity for large deployments
+- Requires careful performance tuning
+- Needs encryption and security planning
+
+### Scheduler
+
+Decides which nodes run each pod by evaluating resources, topology, and requirements.
+
+**Decision Criteria:**
+- **CPU Affinity**: Optimizes CPU-bound workloads
+- **Memory Allocation**: Ensures sufficient memory
+- **Network Topology**: Minimizes latency, maximizes throughput
+- **Storage Availability**: Matches pods with suitable storage classes
+
+**Workflow:**
+1. Receives pod creation requests from API server
+2. Evaluates available resources on nodes
+3. Selects suitable nodes for pods
+4. Allocates CPU, memory, and storage
+5. Monitors node availability continuously
+
+### kubectl
+
+A command-line tool for interacting with the cluster's API server.
+
+**Primary Functions:**
+- Manage pod operations (create, update, delete)
+- Inspect cluster state (clusters, nodes, pods, services)
+- Apply configuration changes from YAML/JSON manifests
+
+---
+
+## Worker Node Deep Dive
+
+<Mermaid chart={`flowchart TB
+    subgraph wn["Worker Node"]
+        proxy["Kube-proxy"]
+        kubelet["Kubelet"]
+        subgraph cr["Container Runtime"]
+            subgraph pod["POD"]
+                container["container"]
+            end
+        end
+    end
+    
+    note1["Routing incoming traffic
+    Service routing
+    Load balancing
+    Service Discovery
+    DNS Proxy"]
+    note2["Node Registration
+    Pod Execution
+    Resource monitoring
+    Health Checks"]
+    note3["Running Containers
+    Resource management
+    Networking integration"]
+    
+    proxy -..- note1
+    kubelet -..- note2
+    cr -..- note3
+    
+    style proxy fill:#f8b4b4,stroke:#e57373
+    style kubelet fill:#f8b4b4,stroke:#e57373
+    style cr fill:#a5d6a7,stroke:#66bb6a
+    style pod fill:#90caf9,stroke:#42a5f5
+    style container fill:#ffcc80,stroke:#ffa726
+    style note1 fill:#fce4ec,stroke:#f48fb1
+    style note2 fill:#fce4ec,stroke:#f48fb1
+    style note3 fill:#fce4ec,stroke:#f48fb1
+`} />
+
+### Kubelet
+
+An agent running on each worker node managing resources and interacting with the API server.
+
+**Responsibilities:**
+- **Resource Management**: Monitors CPU/memory and reports to API server
+- **Pod Scheduling**: Receives pod assignments and runs Pods on available resources
+- **Runtime Monitoring**: Tracks container status, image health, and metrics
+
+**Workflow:**
+1. Connects to API server for pod assignments
+2. Evaluates resources and schedules pods
+3. Monitors node resource usage continuously
+4. Updates container status via runtime interface
+5. Launches and manages pods
+
+**Common Issues:**
+- Resource limitations causing pod failures
+- Container runtime errors disrupting updates
+- Network problems hindering API communication
+
+### Kube-Proxy
+
+Manages service networking by routing and load-balancing traffic to Pods.
+
+**Responsibilities:**
+- **Service Traffic Management**: Routes traffic from Cluster IPs to Pods using load-balancing
+- **NodePort Management**: Maps external ports to Pods for external access
+- **Status Reporting**: Updates API server about service changes
+
+**Workflow:**
+1. Registers node with API server
+2. Creates/updates service proxy rules for new Services
+3. Distributes requests among Pods (round-robin)
+4. Reports Pod failures or restarts
+
+**Benefits:**
+- High availability even during instance failures
+- Efficient traffic distribution for scalability
+- Service-level monitoring insights
+
+### Container Runtime
+
+Manages the lifecycle of containers from creation to termination.
+
+**Responsibilities:**
+- Container creation from images
+- Resource allocation (CPU, memory)
+- Networking and volume handling
+- Health monitoring and termination
+
+**Types:**
+- **Kubernetes-Native**: Docker (runc), CRI-O, containerd
+- **Third-Party**: rkt (CoreOS), cri-containers
+
+**Key Features:**
+- Container isolation for security
+- Efficient networking and IPC
+- Optimized resource management
+
+---
+
+## Summary
+
+Kubernetes architecture consists of two main components:
+
+| Component | Role |
+|-----------|------|
+| **Control Plane** | Manages cluster state, scheduling, and orchestration |
+| **Worker Nodes** | Run application workloads as Pods |
+
+The control plane includes the API Server, Scheduler, Controller Manager, and etcd. Worker nodes contain the Kubelet, Kube-proxy, and Container Runtime.
+
+In the next part, we'll explore Kubernetes objects like Deployments, Services, ConfigMaps, and more. Stay tuned!

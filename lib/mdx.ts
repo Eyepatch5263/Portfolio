@@ -9,7 +9,15 @@ import remarkGfm from "remark-gfm";
 import readingTime from "reading-time";
 import { mdxComponents } from "@/components/mdx-components";
 
-const BLOG_DIR = path.join(process.cwd(), "content/blogs");
+export type BlogType = "engineering" | "tech";
+
+const BLOG_DIRS: Record<BlogType, string> = {
+    engineering: path.join(process.cwd(), "content/blogs"),
+    tech: path.join(process.cwd(), "content/tech-blogs"),
+};
+
+// Legacy alias for backwards compatibility
+const BLOG_DIR = BLOG_DIRS.engineering;
 
 export interface BlogPost {
     slug: string;
@@ -27,24 +35,31 @@ export interface BlogPostWithContent extends BlogPost {
     headings: { id: string; text: string; level: number }[];
 }
 
-// Get all blog post slugs
-export function getBlogSlugs(): string[] {
-    if (!fs.existsSync(BLOG_DIR)) {
+// Get all blog post slugs for a specific type
+export function getBlogSlugsByType(type: BlogType): string[] {
+    const dir = BLOG_DIRS[type];
+    if (!fs.existsSync(dir)) {
         return [];
     }
     return fs
-        .readdirSync(BLOG_DIR)
+        .readdirSync(dir)
         .filter((file) => file.endsWith(".mdx"))
         .map((file) => file.replace(/\.mdx$/, ""));
 }
 
-// Get all blog posts metadata
-export function getAllBlogPosts(): BlogPost[] {
-    const slugs = getBlogSlugs();
+// Get all blog post slugs (legacy - engineering only)
+export function getBlogSlugs(): string[] {
+    return getBlogSlugsByType("engineering");
+}
+
+// Get all blog posts metadata for a specific type
+export function getAllBlogPostsByType(type: BlogType): BlogPost[] {
+    const dir = BLOG_DIRS[type];
+    const slugs = getBlogSlugsByType(type);
 
     const posts = slugs
         .map((slug) => {
-            const filePath = path.join(BLOG_DIR, `${slug}.mdx`);
+            const filePath = path.join(dir, `${slug}.mdx`);
             const fileContent = fs.readFileSync(filePath, "utf-8");
             const { data, content } = matter(fileContent);
             const stats = readingTime(content);
@@ -64,6 +79,11 @@ export function getAllBlogPosts(): BlogPost[] {
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return posts;
+}
+
+// Get all blog posts metadata (legacy - engineering only)
+export function getAllBlogPosts(): BlogPost[] {
+    return getAllBlogPostsByType("engineering");
 }
 
 // Extract headings from MDX content for Table of Contents
@@ -86,9 +106,10 @@ function extractHeadings(content: string): { id: string; text: string; level: nu
     return headings;
 }
 
-// Get a single blog post with content
-export async function getBlogPost(slug: string): Promise<BlogPostWithContent | null> {
-    const filePath = path.join(BLOG_DIR, `${slug}.mdx`);
+// Get a single blog post with content by type
+export async function getBlogPostByType(slug: string, type: BlogType): Promise<BlogPostWithContent | null> {
+    const dir = BLOG_DIRS[type];
+    const filePath = path.join(dir, `${slug}.mdx`);
 
     if (!fs.existsSync(filePath)) {
         return null;
@@ -131,4 +152,14 @@ export async function getBlogPost(slug: string): Promise<BlogPostWithContent | n
         content: compiledContent,
         headings,
     };
+}
+
+// Get a single blog post with content (legacy - tries engineering first, then tech)
+export async function getBlogPost(slug: string): Promise<BlogPostWithContent | null> {
+    // Try engineering first
+    const engineeringPost = await getBlogPostByType(slug, "engineering");
+    if (engineeringPost) return engineeringPost;
+
+    // Fall back to tech
+    return getBlogPostByType(slug, "tech");
 }

@@ -8,30 +8,53 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { TableOfContents } from "@/components/table-of-contents";
-import { getBlogPost, getAllBlogPosts, getBlogSlugs } from "@/lib/mdx";
+import { getBlogPostByType, getAllBlogPostsByType, getBlogSlugsByType, type BlogType } from "@/lib/mdx";
 
-// Generate static params for all blog posts
+// Generate static params for all blog posts from both types
 export async function generateStaticParams() {
-    const slugs = getBlogSlugs();
-    return slugs.map((slug) => ({ slug }));
+    const engineeringSlugs = getBlogSlugsByType("engineering").map((slug) => ({
+        slug,
+    }));
+    const techSlugs = getBlogSlugsByType("tech").map((slug) => ({
+        slug,
+    }));
+    return [...engineeringSlugs, ...techSlugs];
 }
 
 interface BlogPostPageProps {
     params: Promise<{
         slug: string;
     }>;
+    searchParams: Promise<{
+        type?: string;
+    }>;
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+export default async function BlogPostPage({ params, searchParams }: BlogPostPageProps) {
     const { slug } = await params;
-    const post = await getBlogPost(slug);
+    const { type } = await searchParams;
+
+    // Determine blog type from URL param, default to trying engineering first
+    let blogType: BlogType = type === "tech" ? "tech" : "engineering";
+    let post = await getBlogPostByType(slug, blogType);
+
+    // If not found in specified type, try the other type
+    if (!post) {
+        const alternateType: BlogType = blogType === "engineering" ? "tech" : "engineering";
+        post = await getBlogPostByType(slug, alternateType);
+        if (post) {
+            blogType = alternateType;
+        }
+    }
 
     if (!post) {
         notFound();
     }
 
-    const allPosts = getAllBlogPosts();
+    const allPosts = getAllBlogPostsByType(blogType);
     const relatedPosts = allPosts.filter((p) => p.slug !== slug).slice(0, 2);
+
+    const backUrl = `/blog?type=${blogType}`;
 
     return (
         <>
@@ -43,9 +66,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         <article className="w-full xl:w-[80%]">
                             {/* Back Button */}
                             <Button variant="ghost" asChild className="mb-8">
-                                <Link href="/blog">
+                                <Link href={backUrl}>
                                     <ArrowLeft className="mr-2 h-4 w-4" />
-                                    Back to Blog
+                                    Back to {blogType === "engineering" ? "Engineering" : "Tech"} Blog
                                 </Link>
                             </Button>
 
@@ -123,7 +146,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                     <h3 className="text-lg font-semibold mb-6">More Posts</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {relatedPosts.map((relatedPost) => (
-                                            <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`}>
+                                            <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}?type=${blogType}`}>
                                                 <Card className="h-full hover:border-foreground/20 transition-colors cursor-pointer">
                                                     <CardContent className="pt-6">
                                                         <h4 className="font-medium">{relatedPost.title}</h4>

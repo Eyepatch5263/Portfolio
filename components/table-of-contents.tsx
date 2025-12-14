@@ -46,11 +46,11 @@ export function TableOfContents({ headings, className }: TableOfContentsProps) {
 
     return (
         <nav className={cn("space-y-1", className)}>
-            <p className="font-medium text-sm text-foreground mb-4">On this page</p>
-            <ul className="space-y-2 text-sm">
-                {headings.map((heading) => (
+            <p className="font-medium text-sm md:text-xl text-foreground mb-4">On this page</p>
+            <ul className="space-y-2 text-sm md:text-lg">
+                {headings.map((heading, index) => (
                     <li
-                        key={heading.id}
+                        key={`${heading.id}-${index}`}
                         style={{ paddingLeft: `${(heading.level - 2) * 12}px` }}
                     >
                         <a

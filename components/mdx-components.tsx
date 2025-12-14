@@ -1,5 +1,7 @@
 import type { ComponentPropsWithoutRef } from "react";
+import { Children, isValidElement } from "react";
 import { cn } from "@/lib/utils";
+import { Mermaid } from "@/components/mermaid";
 
 // Language display names
 const languageDisplay: Record<string, string> = {
@@ -43,6 +45,22 @@ function Pre({
     );
 }
 
+// Helper to extract text content from React children
+function extractTextContent(children: React.ReactNode): string {
+    let text = "";
+    Children.forEach(children, (child) => {
+        if (typeof child === "string") {
+            text += child;
+        } else if (isValidElement(child)) {
+            const props = child.props as { children?: React.ReactNode };
+            if (props.children) {
+                text += extractTextContent(props.children);
+            }
+        }
+    });
+    return text;
+}
+
 // Custom figure wrapper for rehype-pretty-code
 function Figure({
     children,
@@ -53,6 +71,15 @@ function Figure({
     const isCodeBlock =
         props["data-rehype-pretty-code-figure" as keyof typeof props] !== undefined;
 
+    // Extract language from data attribute
+    const dataLanguage = props["data-language" as keyof typeof props] as string;
+
+    // Check if this is a mermaid diagram
+    if (dataLanguage === "mermaid") {
+        const chartContent = extractTextContent(children);
+        return <Mermaid chart={chartContent} />;
+    }
+
     if (!isCodeBlock) {
         return (
             <figure className={className} {...props}>
@@ -61,9 +88,8 @@ function Figure({
         );
     }
 
-    // Extract language from the figcaption or data attribute
+    // Use language for code block title
     let language = "Code";
-    const dataLanguage = props["data-language" as keyof typeof props] as string;
     if (dataLanguage) {
         language = languageDisplay[dataLanguage] || dataLanguage.toUpperCase();
     }
@@ -269,7 +295,7 @@ function H3({ className, children, id, ...props }: ComponentPropsWithoutRef<"h3"
 function P({ className, ...props }: ComponentPropsWithoutRef<"p">) {
     return (
         <p
-            className={cn("leading-7 [&:not(:first-child)]:mt-4 text-muted-foreground", className)}
+            className={cn("leading-7 [&:not(:first-child)]:mt-4 text-muted-foreground text-base lg:text-xl", className)}
             {...props}
         />
     );
@@ -342,4 +368,5 @@ export const mdxComponents = {
     blockquote: Blockquote,
     hr: Hr,
     a: A,
+    Mermaid: Mermaid,
 };

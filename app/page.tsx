@@ -6,10 +6,11 @@ import { Experience } from "@/components/sections/experience";
 import { Blogs } from "@/components/sections/blogs";
 import { Testimonials } from "@/components/sections/testimonials";
 import { About } from "@/components/sections/about";
-import { getAllBlogPosts } from "@/lib/mdx";
+import { getAllBlogPostsByType } from "@/lib/mdx";
 
 export default function Home() {
-  const posts = getAllBlogPosts();
+  const engineeringPosts = getAllBlogPostsByType("engineering");
+  const techPosts = getAllBlogPostsByType("tech");
 
   return (
     <>
@@ -18,7 +19,7 @@ export default function Home() {
         <Hero />
         <Projects />
         <Experience />
-        <Blogs posts={posts} />
+        <Blogs engineeringPosts={engineeringPosts} techPosts={techPosts} />
         <Testimonials />
         <About />
       </main>
@@ -26,3 +27,4 @@ export default function Home() {
     </>
   );
 }
+

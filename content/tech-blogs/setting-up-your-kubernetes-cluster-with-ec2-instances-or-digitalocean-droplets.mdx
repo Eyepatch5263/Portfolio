@@ -1,0 +1,325 @@
+---
+title: "Setting Up Your Kubernetes Cluster with EC2 Instances or DigitalOcean Droplets"
+excerpt: "A step-by-step guide to setting up a Kubernetes cluster using EC2 instances or DigitalOcean droplets with Kind, Minikube, or Kubeadm."
+date: "2024-12-28"
+tags: ["Kubernetes", "AWS", "DigitalOcean", "DevOps", "Cloud"]
+published: true
+---
+
+If you're venturing into Kubernetes land, the first step is setting up a virtual machine (VM) in the cloud. You can use either AWS EC2 Instances or DigitalOcean Droplets.
+
+## What Are EC2 Instances and Droplets?
+
+Think of these as your personal cloud-based computers. With them, you'll configure the environment needed to deploy and run your Kubernetes cluster.
+
+### AWS EC2
+
+1. **Sign Up**: Create an AWS account
+2. **Launch Instance**: Set up an EC2 instance and follow the instructions to connect
+3. **Connect**: Use AWS's guide to SSH into your instance
+
+### DigitalOcean Droplets
+
+1. **Sign Up**: Create a DigitalOcean account
+2. **Create Droplet**: Spin up a droplet with the specs you need
+3. **Connect**: Access the droplet using the web terminal provided
+
+---
+
+## Installing Kind and Docker
+
+### Step 1: Create a Shell Script
+
+Use vim to create the file:
+
+```bash
+vim kind_install.sh
+```
+
+Paste this script into the file:
+
+```bash
+#!/bin/bash
+
+[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+chmod +x ./kind
+sudo cp ./kind /usr/local/bin/kind
+
+VERSION="v1.30.0"
+URL="https://dl.k8s.io/release/${VERSION}/bin/linux/amd64/kubectl"
+INSTALL_DIR="/usr/local/bin"
+
+curl -LO "$URL"
+chmod +x kubectl
+sudo mv kubectl $INSTALL_DIR/
+kubectl version --client
+
+rm -f kubectl
+rm -rf kind
+
+echo "kind & kubectl installation complete."
+```
+
+Make it executable and run:
+
+```bash
+chmod 777 kind_install.sh
+./kind_install.sh
+```
+
+### Step 2: Install Docker
+
+Update packages and install Docker:
+
+```bash
+sudo apt-get update
+sudo apt-get install docker.io
+```
+
+Enable Docker at boot and set permissions:
+
+```bash
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER && newgrp docker
+```
+
+---
+
+## Creating a Kind Cluster
+
+Create a configuration file:
+
+```bash
+vim config.yml
+```
+
+Add this configuration:
+
+```yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+nodes:
+- role: control-plane
+  image: kindest/node:v1.28.0
+- role: worker
+  image: kindest/node:v1.28.0
+- role: worker
+  image: kindest/node:v1.28.0
+- role: worker
+  image: kindest/node:v1.28.0
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+```
+
+Create and verify the cluster:
+
+```bash
+kind create cluster --name=<cluster_name> --config=config.yml
+kubectl get nodes
+```
+
+---
+
+## Installing and Setting Up Cluster with Minikube
+
+Install dependencies:
+
+```bash
+sudo apt install -y curl wget apt-transport-https
+```
+
+Download and install Minikube:
+
+```bash
+wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+chmod +x minikube-linux-amd64
+sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+```
+
+Verify and start:
+
+```bash
+minikube version
+minikube start --driver=docker --vm=true
+```
+
+> **Note**: Use `--vm=true` only for EC2 instances. On Droplets, you can skip it. Use either Kind or Minikube at a time; mixing both may cause errors!
+
+---
+
+## Kubeadm: Setting Up a Production Cluster
+
+For production environments, Kubeadm is your best friend. Let's set up a cluster with a control plane (master) and a worker node across two VMs.
+
+### Prepping AWS
+
+**Step 1**: Select the worker-k8s Instance from the EC2 Dashboard
+
+**Step 2**: Navigate to Security Groups under Network & Security
+
+**Step 3**: Create a new Security Group with these Inbound Rules:
+
+| Type | Protocol | Port | Source |
+|------|----------|------|--------|
+| SSH | TCP | 22 | Your IP or 0.0.0.0/0 |
+| Custom TCP | TCP | 6443 | Master node IP |
+
+**Step 4**: Assign the security group to both instances and launch them
+
+### Prepping DigitalOcean
+
+1. Create two droplets: `master-k8s` and `worker-k8s` with the same SSH key
+2. Create a firewall with inbound rules for ports 6443 and 22 (TCP/UDP)
+3. Assign the firewall to both droplets
+
+---
+
+## Kubernetes Cluster Setup Commands
+
+### Commands for Both Master and Worker Nodes
+
+**1. Disable Swap:**
+
+```bash
+sudo swapoff -a
+```
+
+**2. Load Kernel Modules:**
+
+```bash
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+```
+
+**3. Set Sysctl Parameters:**
+
+```bash
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sudo sysctl --system
+```
+
+**4. Install Containerd:**
+
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install -y containerd.io
+
+containerd config default | sed -e 's/SystemdCgroup = false/SystemdCgroup = true/' -e 's/sandbox_image = "registry.k8s.io\/pause:3.6"/sandbox_image = "registry.k8s.io\/pause:3.9"/' | sudo tee /etc/containerd/config.toml
+
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+sudo systemctl status containerd
+```
+
+**5. Install Kubernetes Components:**
+
+```bash
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+```
+
+---
+
+### Commands for Master Node Only
+
+**1. Initialize the Cluster:**
+
+```bash
+sudo kubeadm init
+```
+
+**2. Configure kubeconfig:**
+
+For non-root users (EC2):
+
+```bash
+mkdir -p "$HOME/.kube"
+sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
+```
+
+For root users (DigitalOcean):
+
+```bash
+export KUBECONFIG=/etc/kubernetes/admin.conf
+```
+
+**3. Install Calico Network Plugin:**
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+```
+
+**4. Generate Worker Join Command:**
+
+```bash
+kubeadm token create --print-join-command
+```
+
+---
+
+### Commands for Worker Node Only
+
+**1. Reset kubeadm (if needed):**
+
+```bash
+kubeadm reset
+```
+
+**2. Join the Cluster:**
+
+```bash
+sudo kubeadm join <master-ip>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash> --cri-socket unix:///run/containerd/containerd.sock
+```
+
+---
+
+## Verify the Cluster
+
+On the master node:
+
+```bash
+kubectl get nodes
+```
+
+Expected output:
+
+```
+NAME          STATUS   ROLES           AGE   VERSION
+master-k8s    Ready    control-plane   XXs   v1.29.x
+worker-k8s    Ready    <none>          XXs   v1.29.x
+```
+
+Your Kubernetes cluster is now successfully set up with one control plane and one worker node. This setup forms the foundation for exploring Kubernetes' powerful orchestration capabilities.
