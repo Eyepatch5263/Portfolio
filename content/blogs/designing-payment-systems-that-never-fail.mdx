@@ -1,0 +1,109 @@
+---
+title: "Designing Payment Systems That Never Fail"
+excerpt: "How we built a real-time payments platform with 99.99% uptime. Lessons on idempotency, eventual consistency, and graceful degradation."
+date: "2024-01-15"
+author: "Developer"
+tags: ["System Design", "Payments", "Distributed Systems"]
+published: true
+---
+
+Payment systems are unforgiving. A single bug can mean double charges, lost money, or worse—broken trust. Here's how we built a system that handles 10K+ daily transactions with 99.99% uptime.
+
+## The Problem
+
+Our legacy payment system was failing. During peak hours, we'd see timeout errors, duplicate charges, and frustrated customers. The monolithic architecture couldn't handle the load, and our retry logic was... optimistic at best.
+
+## Core Principles
+
+Before writing any code, we established three principles that would guide every decision:
+
+1. **Idempotency is non-negotiable** — The same request processed twice must have the same result
+2. **Eventual consistency is acceptable** — We can tolerate brief inconsistencies if we guarantee eventual correctness
+3. **Fail gracefully** — When things break (and they will), fail in a way that doesn't lose money
+
+## Implementing Idempotency
+
+Every payment request includes a client-generated idempotency key. We store this in a PostgreSQL table with a UNIQUE constraint:
+
+```sql
+CREATE TABLE payments (
+  id UUID PRIMARY KEY,
+  idempotency_key VARCHAR(255) UNIQUE NOT NULL,
+  amount BIGINT NOT NULL,
+  status payment_status NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+When a duplicate request arrives, the UNIQUE constraint prevents a new row from being created. We simply return the existing payment's status. This is more reliable than application-level checks because it's atomic at the database level.
+
+## The State Machine
+
+Payments move through a strict state machine:
+
+- `pending` → `processing` → `succeeded`
+- `pending` → `processing` → `failed`
+- `failed` → `pending` (for retries)
+
+Each transition is logged to an immutable audit table. We can reconstruct the entire history of any payment for debugging or compliance.
+
+## API Design
+
+Here's what our payment endpoint looks like:
+
+```typescript
+// Idempotent payment endpoint
+interface PaymentRequest {
+  idempotency_key: string;
+  amount: number;
+  currency: string;
+  customer_id: string;
+  payment_method_id: string;
+}
+
+interface PaymentResponse {
+  id: string;
+  status: 'succeeded' | 'pending' | 'failed';
+  created_at: string;
+}
+
+async function createPayment(req: PaymentRequest): Promise<PaymentResponse> {
+  // Check for existing payment with same idempotency key
+  const existing = await db.payments.findByIdempotencyKey(req.idempotency_key);
+  if (existing) {
+    return existing;
+  }
+  
+  // Create new payment
+  return await db.payments.create(req);
+}
+```
+
+## Handling External Failures
+
+Payment processors fail. Networks timeout. Here's our strategy:
+
+1. **Exponential backoff** — Wait longer between retries to avoid overwhelming a struggling service
+2. **Circuit breaker** — If a processor fails repeatedly, stop trying and alert the team
+3. **Fallback processors** — We have multiple payment providers and can route around failures
+
+## Performance Comparison
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Avg Latency | 2000ms | 200ms |
+| Failure Rate | 5% | 0.01% |
+| Throughput | 100/s | 1000/s |
+| Uptime | 99.5% | 99.99% |
+
+## Lessons Learned
+
+After a year in production, here's what we'd do differently:
+
+- **Invest in observability earlier** — We added detailed logging after our first incident. Should've been there from day one.
+- **Test with chaos engineering** — Randomly failing components in staging revealed bugs we never expected.
+- **Document the state machine** — New team members struggled to understand valid transitions until we created visual diagrams.
+
+## Conclusion
+
+Building payment systems is hard, but it's mostly about discipline. Idempotency, state machines, and graceful degradation aren't fancy—they're just reliable. And in payments, reliable is everything.

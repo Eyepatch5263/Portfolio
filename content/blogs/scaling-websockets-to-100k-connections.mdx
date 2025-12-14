@@ -1,0 +1,129 @@
+---
+title: "Scaling WebSockets to 100K Concurrent Connections"
+excerpt: "The architecture behind our real-time collaboration feature. From single server to horizontally scaled infrastructure."
+date: "2023-11-20"
+author: "Developer"
+tags: ["Performance", "WebSockets", "Scaling"]
+published: true
+---
+
+Real-time features are table stakes now. But scaling WebSockets is different from scaling REST APIs. Here's how we went from a single server to handling 100K concurrent connections.
+
+## The Challenge
+
+Our collaborative document editor needed real-time sync. Users expected to see each other's changes instantly—no refresh, no delay. Traditional HTTP polling wasn't going to cut it.
+
+## Starting Simple
+
+We started with a single Node.js server using the ws library. It worked great for our first 1,000 users. Then it didn't.
+
+```typescript
+import { WebSocketServer } from 'ws';
+
+const wss = new WebSocketServer({ port: 8080 });
+
+wss.on('connection', (ws) => {
+  ws.on('message', (message) => {
+    // Broadcast to all clients
+    wss.clients.forEach((client) => {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  });
+});
+```
+
+Simple, right? But this approach has problems:
+
+- All state lives in memory on one server
+- No horizontal scaling
+- Single point of failure
+
+## The Scaling Journey
+
+Our evolution looked like this:
+
+1. **Single server** with in-memory state
+2. **Multiple servers** with Redis Pub/Sub for message broadcasting
+3. **Connection load balancer** with sticky sessions
+4. **Sharded Redis** for global message distribution
+
+## Adding Redis Pub/Sub
+
+The key insight was separating connection handling from message distribution:
+
+```typescript
+import Redis from 'ioredis';
+
+const publisher = new Redis();
+const subscriber = new Redis();
+
+// Subscribe to document channel
+subscriber.subscribe('doc:123');
+
+subscriber.on('message', (channel, message) => {
+  // Broadcast to all local connections for this document
+  const connections = documentConnections.get(channel);
+  connections?.forEach((ws) => ws.send(message));
+});
+
+// When a client sends a message
+ws.on('message', (message) => {
+  // Publish to Redis - all servers will receive it
+  publisher.publish('doc:123', message);
+});
+```
+
+## Key Insight: Presence is Expensive
+
+The most expensive feature wasn't document sync—it was presence. Showing who's currently viewing a document requires constant updates. We optimized by:
+
+- Batching presence updates (every 100ms instead of every keystroke)
+- Using cursor position deltas instead of absolute positions
+- Aggressively culling stale presence data
+
+## Connection Protocol
+
+Here's our WebSocket message format:
+
+```json
+{
+  "type": "operation",
+  "document_id": "doc_123",
+  "operations": [
+    { "type": "insert", "position": 42, "text": "Hello" }
+  ],
+  "vector_clock": { "client_a": 5, "client_b": 3 }
+}
+```
+
+## The Architecture Today
+
+```
+Client → Load Balancer → WebSocket Server Cluster
+                              ↓
+                         Redis Pub/Sub
+                              ↓
+                     Document State (Postgres)
+```
+
+## Performance Results
+
+| Metric | Single Server | Scaled |
+|--------|---------------|--------|
+| Max Connections | 10K | 100K+ |
+| Message Latency | 50ms | 80ms |
+| CPU Usage | 90% | 40% |
+| Memory per conn | 50KB | 30KB |
+
+## What We'd Do Differently
+
+- Design for horizontal scaling from day one
+- Use a proper connection health monitoring system
+- Implement client-side reconnection with exponential backoff
+- Consider using a managed WebSocket service for the first version
+
+## Conclusion
+
+Scaling WebSockets is about accepting that your single-server design won't work and planning for distribution from the start. Redis Pub/Sub is your friend, but remember—it's not a silver bullet.

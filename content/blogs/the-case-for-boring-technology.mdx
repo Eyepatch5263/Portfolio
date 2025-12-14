@@ -1,0 +1,115 @@
+---
+title: "The Case for Boring Technology"
+excerpt: "Why I choose PostgreSQL over the latest database, and how 'boring' choices have saved countless debugging hours."
+date: "2023-09-05"
+author: "Developer"
+tags: ["Architecture", "Best Practices"]
+published: true
+---
+
+Every few months, a new database promises to solve all your problems. Here's why I still reach for PostgreSQL—and why you might want to think twice before adopting the hot new thing.
+
+## The Innovation Token Budget
+
+I stole this concept from Dan McKinley: every project has a limited budget for "innovation tokens." You can spend them on new technologies, but each one adds risk, learning curve, and potential failure modes.
+
+Think of it this way:
+
+- You get about 3 innovation tokens per project
+- Each new technology costs 1 token
+- Running out of tokens means operational complexity overwhelms your team
+
+## PostgreSQL: The Boring Choice
+
+PostgreSQL is 30+ years old. It's not exciting. But:
+
+- It's incredibly well-documented
+- Failure modes are well-understood
+- Most hosting providers support it
+- Hiring is easier—more engineers know it
+- Extensions like `pg_trgm` and `PostGIS` cover most "need a specialized database" cases
+
+## When "Boring" Saved Us
+
+Last year, we had a production incident at 2 AM. The fix required understanding how our database handled concurrent writes during a network partition.
+
+Because we used PostgreSQL, I could:
+
+1. Google the exact error message
+2. Find a Stack Overflow answer from 2015
+3. Apply a well-documented fix
+4. Go back to sleep
+
+With a newer database, I might have been debugging until sunrise.
+
+## The Real Cost of "New"
+
+```typescript
+// What you think adopting new tech looks like
+const benefits = ['faster', 'cooler', 'modern'];
+
+// What it actually looks like
+const costs = [
+  'Learning curve for entire team',
+  'Sparse documentation',
+  'Unknown failure modes',
+  'Fewer Stack Overflow answers',
+  'Hiring becomes harder',
+  'Migration complexity',
+];
+```
+
+## When to Be Exciting
+
+Boring technology doesn't mean never innovating. It means being intentional. Choose cutting-edge when:
+
+1. There's no boring option that works
+2. The new technology is core to your competitive advantage
+3. You have the team capacity to handle unknown failure modes
+
+## My Default Stack
+
+For most projects, I start with:
+
+| Layer | Choice | Why |
+|-------|--------|-----|
+| Database | PostgreSQL | Reliable, feature-rich |
+| Cache | Redis | Simple, fast |
+| Queue | PostgreSQL or Redis | Avoid adding new systems |
+| Backend | Node.js or Go | Team familiarity |
+| Frontend | React/Next.js | Ecosystem, hiring |
+
+This isn't the most exciting stack. But I can debug it at 3am.
+
+## The Decision Framework
+
+Before adopting new technology, ask:
+
+1. **What problem does this solve?** Be specific.
+2. **Can PostgreSQL do this?** Seriously, check first.
+3. **Who will maintain this in 2 years?** New hire? You?
+4. **What happens when it breaks at 3am?** Who knows how to fix it?
+
+## Real Examples
+
+### Bad: "Let's use MongoDB for flexibility"
+
+Later: "Why is our data inconsistent? How do we do joins? Why is this aggregation so slow?"
+
+### Good: "Let's use PostgreSQL with JSONB columns"
+
+Later: "We have the flexibility we need AND proper transactions AND fast queries."
+
+### Bad: "Let's use Kafka for our 100 messages/day"
+
+Later: "Why do we need a DevOps engineer just to keep the message queue running?"
+
+### Good: "Let's use a simple table with polling"
+
+Later: "It just works. We'll upgrade when we actually need to."
+
+## Conclusion
+
+Boring technology isn't about being afraid of the new. It's about respecting the value of the known. The best technology choice is often the one that lets you focus on your actual product instead of your infrastructure.
+
+Choose boring. Ship faster. Sleep better.
