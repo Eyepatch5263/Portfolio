@@ -429,7 +429,6 @@ export default function ProjectPage({ params }: ProjectPageParams) {
                         className="mb-12"
                     >
                         <div className="flex flex-wrap items-center gap-4 mb-4">
-                            <Badge variant="outline">{project.role}</Badge>
                             <div className="flex gap-2">
                                 <Button variant="ghost" size="sm" asChild>
                                     <a href="#" target="_blank" rel="noopener noreferrer">

@@ -31,15 +31,13 @@ export function Projects() {
                     >
                         <Link href={`/projects/${project.slug}`}>
                             <Card className="group h-full transition-all duration-300 hover:border-foreground/20 hover:shadow-lg cursor-pointer">
-                                <CardHeader className="pb-4">
+                                <CardHeader>
                                     <div className="flex items-start justify-between">
                                         <div>
                                             <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
                                                 {project.title}
                                             </h3>
-                                            <p className="mt-1 text-sm text-muted-foreground">
-                                                {project.role}
-                                            </p>
+
                                         </div>
                                         <ArrowUpRight className="h-5 w-5 text-muted-foreground opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
                                     </div>

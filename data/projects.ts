@@ -4,7 +4,6 @@ export interface Project {
     title: string;
     tagline: string;
     problem: string;
-    role: string;
     impact: string;
     technologies: string[];
     featured: boolean;
@@ -14,61 +13,78 @@ export interface Project {
 export const projects: Project[] = [
     {
         id: "proj-1",
-        slug: "realtime-payments-platform",
-        title: "Real-time Payments Platform",
-        tagline: "Processing 10K+ daily transactions with 99.99% uptime",
+        slug: "explain-bytes",
+        title: "Explain Bytes",
+        tagline: "Learn systems, fundamentals, and deep engineering concepts explained simply.",
         problem:
-            "Legacy payment system couldn't handle growing transaction volume, causing failed payments and revenue loss.",
-        role: "Lead Engineer",
-        impact: "Reduced payment failures by 95%, increased throughput by 10x",
-        technologies: ["Node.js", "PostgreSQL", "Redis", "Kafka", "Kubernetes"],
+            "Many engineers struggle to understand complex systems and concepts. Explain Bytes provides clear, concise explanations to help developers learn and grow.",
+        impact: "Contributing to the community by providing clear, concise explanations to help developers learn and grow.",
+        technologies: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "Supabase", "NextAuth.js", "Redis", "yjs", "TipTap", "Tanstack-Query", "Shadcn UI", "Mdx", "Websockets", "Tailwind CSS", "Resend"],
         featured: true,
     },
     {
         id: "proj-2",
-        slug: "collaborative-document-editor",
-        title: "Collaborative Document Editor",
-        tagline: "Real-time collaboration for 50K+ daily active users",
+        slug: "codilio",
+        title: "Codilio",
+        tagline: "Code As You Go",
         problem:
-            "Teams needed a fast, reliable way to collaborate on documents without conflicts or data loss.",
-        role: "Full Stack Engineer",
-        impact: "Enabled real-time editing with sub-100ms sync latency",
-        technologies: ["React", "TypeScript", "Go", "MongoDB", "WebSockets"],
+            "Many people needs a fast, reliable platform to code as they go. Codilio provides a platform to code in real-time.",
+        impact: "Users won't have to setup up libraries and packages to start coding.",
+        technologies: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Convex", "lemonSqueezy", "Docker", "Kubernetes", "DecSecOps", "Piston-API", "Zustand", "Monaco-Editor"],
         featured: true,
     },
     {
         id: "proj-3",
-        slug: "multi-tenant-saas-platform",
-        title: "Multi-tenant SaaS Platform",
-        tagline: "White-label solution serving 15+ enterprise clients",
+        slug: "onlyanime",
+        title: "OnlyAnime",
+        tagline: "Platform for weebs to enjoy anime related contents.",
         problem:
-            "Clients needed customizable, isolated environments without the overhead of separate deployments.",
-        role: "Architect & Lead Developer",
-        impact: "Reduced client onboarding time from weeks to hours",
-        technologies: ["Next.js", "Node.js", "PostgreSQL", "Redis", "Vercel"],
+            "As the anime industry is growing, it's becoming harder to find a platform to enjoy anime related contents.",
+        impact: "OnlyAnime provides a platform for anime enthusiasts to enjoy anime related contents.",
+        technologies: ["Next.js", "Node.js", "React.js", "PostgreSQL", "Prisma", "Kinde", "Shadcn UI", "Tailwind CSS", "Stripe", "Cloudinary", "Resend", "DaisyUI"],
         featured: true,
     },
     {
         id: "proj-4",
-        slug: "api-gateway-service",
-        title: "API Gateway Service",
-        tagline: "Unified entry point for 20+ microservices",
+        slug: "spotify-chats",
+        title: "Spotiy Chats",
+        tagline: "Platform for users can listen to songs and chat with their friends.",
         problem:
-            "Growing microservices architecture lacked centralized authentication, rate limiting, and monitoring.",
-        role: "Backend Engineer",
-        impact: "Centralized auth, reduced cross-service latency by 40%",
-        technologies: ["Go", "Redis", "Prometheus", "Grafana", "Docker"],
-        featured: false,
+            "People love seeing which songs their friends are listening to. Spotify Chats provides a platform for users to listen to songs and at same time can chat with their friends.",
+        impact: "Friends can build a bond while chatting while also enjoying the music at same time.",
+        technologies: ["React.js", "Node.js", "Express.js", "MongoDB", "Clerk", "Docker", "Tailwind CSS", "Websockets"],
+        featured: true,
     },
     {
         id: "proj-5",
-        slug: "developer-analytics-dashboard",
-        title: "Developer Analytics Dashboard",
-        tagline: "Insights into code quality and team velocity",
+        slug: "collage-generator",
+        title: "Collage Generator",
+        tagline: "Peeps can generate collages from images which they can use for their social media posts.",
         problem:
-            "Engineering teams lacked visibility into codebase health and deployment patterns.",
-        role: "Full Stack Developer",
-        impact: "Adopted by 5 teams, improved deployment frequency by 25%",
+            "Many people needs a fast, reliable way to generate collages in instant.",
+        impact: "Users can generate collages from images which they can use for their social media posts.",
+        technologies: ["React.js","Next.js", "TypeScript", "MongoDB","Tailwind CSS", "zustand"],
+        featured: false,
+    },
+    {
+        id: "proj-6",
+        slug: "blog-website",
+        title: "Blog Website",
+        tagline: "Write and share your thoughts with the world.",
+        problem:
+            "Many people needs a fast, reliable way to write and share their thoughts with the world.",
+        impact: "Users can write and share their thoughts with the world.",
+        technologies: ["React.js","Node.js","Express.js","MongoDB","Oauth","Cloudinary","editorjs","firebase","Jwt","Multer","Docker"],
+        featured: false,
+    },
+    {
+        id: "proj-7",
+        slug: "EyeNGL",
+        title: "EyeNGL",
+        tagline: "Confess anonymously to your friends about your feelings.",
+        problem:
+            "Many people needs a fast, reliable way to confess anonymously to their friends.",
+        impact: "Users can confess anonymously to their friends about their feelings.",
         technologies: ["React", "Python", "FastAPI", "TimescaleDB", "Docker"],
         featured: false,
     },
