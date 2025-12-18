@@ -7,7 +7,8 @@ export interface Project {
     impact: string;
     technologies: string[];
     featured: boolean;
-    thumbnail?: string;
+    github?: string;
+    demo?: string;
 }
 
 export const projects: Project[] = [
@@ -21,6 +22,8 @@ export const projects: Project[] = [
         impact: "Contributing to the community by providing clear, concise explanations to help developers learn and grow.",
         technologies: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "Supabase", "NextAuth.js", "Redis", "yjs", "TipTap", "Tanstack-Query", "Shadcn UI", "Mdx", "Websockets", "Tailwind CSS", "Resend"],
         featured: true,
+        github: "https://github.com/Eyepatch5263/dev-docs",
+        demo: "https://docs.pratyush.works",
     },
     {
         id: "proj-2",
@@ -32,6 +35,8 @@ export const projects: Project[] = [
         impact: "Users won't have to setup up libraries and packages to start coding.",
         technologies: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Convex", "lemonSqueezy", "Docker", "Kubernetes", "DecSecOps", "Piston-API", "Zustand", "Monaco-Editor"],
         featured: true,
+        github:"https://github.com/Eyepatch5263/codilio",
+        demo:"https://codilio.pratyush.works"
     },
     {
         id: "proj-3",
@@ -43,6 +48,8 @@ export const projects: Project[] = [
         impact: "OnlyAnime provides a platform for anime enthusiasts to enjoy anime related contents.",
         technologies: ["Next.js", "Node.js", "React.js", "PostgreSQL", "Prisma", "Kinde", "Shadcn UI", "Tailwind CSS", "Stripe", "Cloudinary", "Resend", "DaisyUI"],
         featured: true,
+        github:"https://github.com/Eyepatch5263/Onlyanime",
+        demo:"https://onlyanime.pratyush.works"
     },
     {
         id: "proj-4",
@@ -54,6 +61,8 @@ export const projects: Project[] = [
         impact: "Friends can build a bond while chatting while also enjoying the music at same time.",
         technologies: ["React.js", "Node.js", "Express.js", "MongoDB", "Clerk", "Docker", "Tailwind CSS", "Websockets"],
         featured: true,
+        github:"https://github.com/Eyepatch5263/spotify",
+        demo:"https://spotify.pratyush.works"
     },
     {
         id: "proj-5",
@@ -63,8 +72,10 @@ export const projects: Project[] = [
         problem:
             "Many people needs a fast, reliable way to generate collages in instant.",
         impact: "Users can generate collages from images which they can use for their social media posts.",
-        technologies: ["React.js","Next.js", "TypeScript", "MongoDB","Tailwind CSS", "zustand"],
+        technologies: ["React.js","Next.js", "TypeScript","Tailwind CSS", "zustand"],
         featured: false,
+        github:"https://github.com/Eyepatch5263/collage-generator",
+        demo:"https://collage.pratyush.works"
     },
     {
         id: "proj-6",
@@ -76,16 +87,20 @@ export const projects: Project[] = [
         impact: "Users can write and share their thoughts with the world.",
         technologies: ["React.js","Node.js","Express.js","MongoDB","Oauth","Cloudinary","editorjs","firebase","Jwt","Multer","Docker"],
         featured: false,
+        github:"https://github.com/Eyepatch5263/Blogging",
+        demo:"https://blog.pratyush.works"
     },
     {
         id: "proj-7",
-        slug: "EyeNGL",
-        title: "EyeNGL",
+        slug: "feedback",
+        title: "Feedback",
         tagline: "Confess anonymously to your friends about your feelings.",
         problem:
             "Many people needs a fast, reliable way to confess anonymously to their friends.",
         impact: "Users can confess anonymously to their friends about their feelings.",
-        technologies: ["React", "Python", "FastAPI", "TimescaleDB", "Docker"],
+        technologies: ["React.js", "Node.js", "Gemini-API","NextAuth.js","Tailwind CSS","Shadcn-UI"],
         featured: false,
+        github:"https://github.com/Eyepatch5263/feedback",
+        demo:"https://feedback.pratyush.works"
     },
 ];

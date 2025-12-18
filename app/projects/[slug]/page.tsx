@@ -405,6 +405,7 @@ export default function ProjectPage({ params }: ProjectPageParams) {
     return (
         <>
             <Header />
+
             <main className="min-h-screen pt-24 pb-20">
                 <div className="container mx-auto px-6">
                     {/* Back Button */}
@@ -431,13 +432,13 @@ export default function ProjectPage({ params }: ProjectPageParams) {
                         <div className="flex flex-wrap items-center gap-4 mb-4">
                             <div className="flex gap-2">
                                 <Button variant="ghost" size="sm" asChild>
-                                    <a href="#" target="_blank" rel="noopener noreferrer">
+                                    <a href={project.github} target="_blank" rel="noopener noreferrer">
                                         <Github className="mr-2 h-4 w-4" />
                                         Code
                                     </a>
                                 </Button>
                                 <Button variant="ghost" size="sm" asChild>
-                                    <a href="#" target="_blank" rel="noopener noreferrer">
+                                    <a href={project.demo} target="_blank" rel="noopener noreferrer">
                                         <ExternalLink className="mr-2 h-4 w-4" />
                                         Live Demo
                                     </a>
@@ -469,339 +470,54 @@ export default function ProjectPage({ params }: ProjectPageParams) {
                         <ModeSwitch mode={mode} onModeChange={setMode} />
                     </motion.div>
 
-                    <div className="space-y-16">
-                        {/* 1. Problem Statement */}
-                        <motion.section
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">1. Problem Statement</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">What?</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="text-muted-foreground">
-                                        {details.problemStatement.what}
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">Who?</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="text-muted-foreground">
-                                        {details.problemStatement.who}
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">Why it mattered?</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="text-muted-foreground">
-                                        {details.problemStatement.why}
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </motion.section>
-
-                        <Separator />
-
-                        {/* 2. Product Thinking */}
-                        <motion.section
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">2. Product Thinking</h2>
-                            <div className="space-y-6">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">The Solution</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="text-muted-foreground">
-                                        {details.productThinking.solution}
-                                    </CardContent>
-                                </Card>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">
-                                                Alternatives Considered
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <ul className="space-y-2">
-                                                {details.productThinking.alternatives.map((alt, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="text-muted-foreground flex items-start gap-2"
-                                                    >
-                                                        <span className="text-foreground">•</span>
-                                                        {alt}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Trade-offs Made</CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <ul className="space-y-2">
-                                                {details.productThinking.tradeoffs.map((tradeoff, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="text-muted-foreground flex items-start gap-2"
-                                                    >
-                                                        <span className="text-foreground">•</span>
-                                                        {tradeoff}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </div>
-                        </motion.section>
-
-                        <Separator />
-
-                        {/* 3. System Architecture */}
-                        <motion.section
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">3. System Architecture</h2>
-                            <ArchitectureDiagram
-                                nodes={sampleArchitecture.nodes}
-                                connections={sampleArchitecture.connections}
-                            />
-                            <p className="mt-4 text-sm text-muted-foreground">
-                                Hover over components to see details. This diagram is interactive.
-                            </p>
-                        </motion.section>
-
-                        <Separator />
-
-                        {/* 4. Mode-Specific Content */}
-                        <motion.section
-                            key={mode}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">
-                                4. {mode === "recruiter" ? "Impact & Outcome" : "Technical Deep Dive"}
-                            </h2>
-
-                            {mode === "recruiter" ? (
-                                <div className="space-y-6">
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Summary</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="text-muted-foreground">
-                                            {details.recruiterView.summary}
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Key Impact</CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <ul className="space-y-2">
-                                                {details.recruiterView.impact.map((item, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="text-muted-foreground flex items-start gap-2"
-                                                    >
-                                                        <span className="text-green-500">✓</span>
-                                                        {item}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Outcome</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="text-muted-foreground">
-                                            {details.recruiterView.outcome}
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            ) : (
-                                <div className="space-y-6">
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">API Design</CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <pre className="p-4 rounded-lg bg-secondary overflow-x-auto text-sm">
-                                                <code>{details.engineerView.apiDesign}</code>
-                                            </pre>
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Database Schema</CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <pre className="p-4 rounded-lg bg-secondary overflow-x-auto text-sm">
-                                                <code>{details.engineerView.dbSchema}</code>
-                                            </pre>
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">Scaling Approach</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="text-muted-foreground">
-                                            {details.engineerView.scalingApproach}
-                                        </CardContent>
-                                    </Card>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-lg">
-                                                Bottlenecks & Mitigations
-                                            </CardTitle>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <ul className="space-y-2">
-                                                {details.engineerView.bottlenecks.map((item, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="text-muted-foreground flex items-start gap-2"
-                                                    >
-                                                        <span className="text-foreground">•</span>
-                                                        {item}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            )}
-                        </motion.section>
-
-                        <Separator />
-
-                        {/* 5. Challenges & Failures */}
-                        <motion.section
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">5. Challenges & Failures</h2>
-                            <div className="space-y-6">
-                                {details.challenges.map((challenge, i) => (
-                                    <Card key={i}>
-                                        <CardContent className="pt-6">
-                                            <div className="space-y-4">
-                                                <div>
-                                                    <h4 className="font-medium text-destructive mb-2">
-                                                        What Broke
-                                                    </h4>
-                                                    <p className="text-muted-foreground">{challenge.issue}</p>
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-medium text-green-500 mb-2">
-                                                        Lesson Learned
-                                                    </h4>
-                                                    <p className="text-muted-foreground">{challenge.lesson}</p>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        </motion.section>
-
-                        <Separator />
-
-                        {/* 6. Outcome & Learnings */}
-                        <motion.section
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">6. Outcome & Learnings</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">Key Learnings</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <ul className="space-y-2">
-                                            {details.learnings.map((learning, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="text-muted-foreground flex items-start gap-2"
-                                                >
-                                                    <span className="text-foreground">→</span>
-                                                    {learning}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">What I&apos;d Improve Next</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <ul className="space-y-2">
-                                            {details.nextSteps.map((step, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="text-muted-foreground flex items-start gap-2"
-                                                >
-                                                    <span className="text-foreground">○</span>
-                                                    {step}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </motion.section>
-                    </div>
-
-                    {/* Navigation to other projects */}
+                    {/* Under Construction Notice */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5 }}
-                        className="mt-20 pt-12 border-t border-border"
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="mb-16"
                     >
-                        <h3 className="text-lg font-semibold mb-6">Other Projects</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {projects
-                                .filter((p) => p.slug !== project.slug)
-                                .slice(0, 3)
-                                .map((p) => (
-                                    <Link key={p.id} href={`/projects/${p.slug}`}>
-                                        <Card className="h-full hover:border-foreground/20 transition-colors cursor-pointer">
-                                            <CardContent className="pt-6">
-                                                <h4 className="font-medium">{p.title}</h4>
-                                                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                                    {p.tagline}
-                                                </p>
-                                            </CardContent>
-                                        </Card>
-                                    </Link>
-                                ))}
-                        </div>
+                        <Card className="border-2 border-dashed border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
+                            <CardContent className="pt-12 pb-12 text-center">
+                                <motion.div
+                                    animate={{
+                                        rotate: [0, 5, -5, 5, 0],
+                                        scale: [1, 1.05, 1, 1.05, 1],
+                                    }}
+                                    transition={{
+                                        duration: 2,
+                                        repeat: Infinity,
+                                        repeatDelay: 1,
+                                    }}
+                                    className="inline-block mb-6"
+                                >
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+                                        <div className="relative text-6xl">🚧</div>
+                                    </div>
+                                </motion.div>
+
+                                <h3 className="text-2xl font-bold mb-3">
+                                    Project Details Coming Soon
+                                </h3>
+                                <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                                    I'm currently crafting a detailed case study for this project.
+                                    Check back soon for the full breakdown!
+                                </p>
+
+                                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                    <motion.div
+                                        animate={{ opacity: [0.5, 1, 0.5] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="w-2 h-2 bg-primary rounded-full"
+                                    />
+                                    <span>Updates in progress</span>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </motion.div>
+
+                    
                 </div>
             </main>
             <Footer />
