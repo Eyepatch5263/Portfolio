@@ -252,17 +252,17 @@ export const projectArchitecture: Record<string, { nodes: ArchitectureNode[]; co
     },
     "chat": {
         nodes: [
-            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
-            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
-            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
-            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
-            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+            { id: "client", label: "Next.js + Socket.io", type: "frontend" as const, x: 10, y: 50, description: "Frontend client handling UI, local media streams, and WebSocket signaling." },
+            { id: "signaling", label: "Signaling Server", type: "backend" as const, x: 35, y: 50, description: "Node.js server facilitating WebRTC handshakes (Offer/Answer/ICE) via WebSockets." },
+            { id: "redis", label: "Redis DB", type: "database" as const, x: 60, y: 30, description: "Primary message store and Pub/Sub layer for horizontal scaling of chat rooms." },
+            { id: "cloudinary", label: "Cloudinary", type: "external" as const, x: 60, y: 60, description: "Storage for media with secure, signed-URL access." },
+            { id: "webrtc", label: "STUN/TURN", type: "external" as const, x: 85, y: 50, description: "Infrastructure for NAT traversal and relaying P2P traffic for video/audio calls." },
         ],
         connections: [
-            { from: "client", to: "api", label: "HTTPS/JSON" },
-            { from: "api", to: "redis", label: "Cache Lookup" },
-            { from: "api", to: "elasticsearch", label: "Search Queries" },
-            { from: "api", to: "fs", label: "File I/O", animated: true },
+            { from: "client", to: "signaling", label: "Signaling", animated: true },
+            { from: "signaling", to: "redis", label: "Pub/Sub" },
+            { from: "signaling", to: "cloudinary", label: "Media Ops" },
+            { from: "client", to: "webrtc", label: "ICE Exchange" },
         ],
     },
     "feedback": {

@@ -221,104 +221,92 @@ POST /api/content/publish
             "Add support for collaborative visual diagramming using Tldraw.",
         ],
     },
-    "multi-tenant-saas-platform": {
+    "chat": {
         problemStatement: {
-            what: "Clients needed customizable, isolated environments without separate deployments.",
-            who: "Enterprise clients requiring white-label solutions with their own branding and data isolation.",
-            why: "Managing separate deployments per client was expensive and didn't scale.",
+            what: "Users needed a secure, low-latency platform for text, voice, and video communication without relying on third-party data-hungry platforms.",
+            who: "Privacy-conscious users and small teams needing instant communication tools.",
+            why: "Existing chat solutions often have high overhead, complex setups, or privacy concerns regarding message storage.",
         },
         productThinking: {
             solution:
-                "Built a multi-tenant platform with tenant-level customization and data isolation.",
+                "Developed a full-stack chat application leveraging Redis as the primary data store for ultra-fast message delivery. Integrated Socket.io for real-time signaling and WebRTC for secure, peer-to-peer audio/video calling. Media assets are handled via Cloudinary with signed URLs stored in Redis to ensure secure access.",
             alternatives: [
-                "Separate deployment per tenant (expensive)",
-                "Schema-per-tenant in shared database",
-                "Row-level security with shared schema",
+                "HTTP Polling (too slow for real-time)",
+                "Firebase (vendor lock-in and pricing scaling issues)",
+                "Standard SQL DB (slower for high-frequency small message writes)",
             ],
             tradeoffs: [
-                "Shared infrastructure for cost efficiency vs. dedicated for isolation",
-                "Row-level security for simpler ops vs. schema separation for stronger isolation",
-                "Customization limits for maintainability",
+                "Redis over SQL: Sacrificed complex querying capabilities for sub-millisecond message persistence and retrieval.",
+                "WebRTC P2P: Chose Peer-to-Peer over SFU/MCU to reduce server bandwidth costs and enhance privacy, accepting potential connection issues on restricted networks.",
+                "Ephemeral State: Redis handles active session and presence data, while long-term history is optimized for speed.",
             ],
         },
         recruiterView: {
             summary:
-                "Architected a multi-tenant SaaS platform serving 15+ enterprise clients with isolated environments.",
+                "Engineered a high-performance real-time communication platform supporting instant messaging and WebRTC-based video conferencing.",
             impact: [
-                "Reduced client onboarding from weeks to hours",
-                "Serving 15+ enterprise clients on shared infrastructure",
-                "Cut hosting costs by 60% compared to dedicated deployments",
-                "Zero cross-tenant data leakage incidents",
+                "Reduced message delivery latency to sub-50ms using Redis pub/sub.",
+                "Implemented secure P2P video calls reducing server load by 95%.",
+                "Streamlined media sharing with 100% secure Cloudinary signed URLs.",
             ],
             outcome:
-                "Platform became the foundation for the company's enterprise sales motion.",
+                "Delivered a robust, privacy-first communication tool that demonstrates expertise in real-time systems and WebRTC protocols.",
         },
         engineerView: {
-            apiDesign: `// Tenant resolution middleware
-const tenantMiddleware = (req, res, next) => {
-  const tenantId = req.headers['x-tenant-id'] 
-    || extractFromSubdomain(req.hostname);
-  req.tenant = await getTenantConfig(tenantId);
-  next();
-};
+            apiDesign:
+                `// WebSocket Event: New Message
+socket.emit("message:send", {
+  room_id: "room_123",
+  content: "Hello!",
+  media_url: "cl-res-456" // Signed Cloudinary URL
+});
 
-// Tenant-scoped data access
-GET /api/v1/resources
-X-Tenant-Id: tenant_abc
+// WebRTC Signaling: Offer
+socket.emit("webrtc:offer", {
+  target: "peer_b",
+  sdp: offer_payload
+});
 
-// Response is automatically filtered by tenant`,
-            dbSchema: `-- Row-level security approach
-CREATE TABLE tenants (
-  id UUID PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  subdomain VARCHAR(63) UNIQUE,
-  config JSONB DEFAULT '{}',
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+// Redis Key Schema
+HGETALL "room:messages:room_123" // Retrieves message history`,
+            dbSchema: `// Redis Primary Storage (Key-Value/Hash mapping)
 
-CREATE TABLE resources (
-  id UUID PRIMARY KEY,
-  tenant_id UUID REFERENCES tenants(id) NOT NULL,
-  data JSONB,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- RLS policy
-ALTER TABLE resources ENABLE ROW LEVEL SECURITY;
-CREATE POLICY tenant_isolation ON resources
-  USING (tenant_id = current_setting('app.tenant_id')::UUID);`,
+"user:{id}:profile" -> { name, avatar_url, status }
+"room:{id}:messages" -> [ { sender_id, text, timestamp, media_id } ]
+"room:{id}:members" -> Set of user_ids
+"media:{id}:signed_url" -> Temporary access link`,
             scalingApproach:
-                "Shared PostgreSQL with RLS, Redis for tenant config caching, per-tenant rate limiting. Large tenants can be migrated to dedicated resources.",
+                "Utilized Redis Pub/Sub for horizontal scaling of WebSocket servers, ensuring messages reach clients regardless of which server node they are connected to. Implemented STUN/TURN servers to facilitate WebRTC NAT traversal for reliable P2P connections.",
             bottlenecks: [
-                "Noisy neighbor problem - per-tenant resource quotas",
-                "Config cache invalidation across servers - Redis pub/sub",
-                "Tenant-specific customization complexity - JSON Schema validation",
+                "Redis memory limits for historical data - implemented message TTL and archival",
+                "WebRTC connection failures on corporate firewalls - mitigated with TURN server relay",
+                "Socket.io memory overhead per connection - optimized heartbeat intervals",
             ],
         },
         challenges: [
             {
                 issue:
-                    "Early implementation had a bug where tenant context wasn't set properly in background jobs.",
+                    "ICE candidate exchange was failing in symmetric NAT environments, preventing video calls.",
                 lesson:
-                    "Always pass tenant context explicitly to async jobs. Never rely on request context.",
+                    "Integrated a global TURN server mesh to provide a fallback relay, ensuring high connection success rate.",
             },
             {
                 issue:
-                    "Some tenants had 100x more data than others, causing query performance issues.",
+                    "Message ordering was inconsistent during high-concurrency bursts.",
                 lesson:
-                    "Implemented per-tenant query analysis and automated index suggestions.",
+                    "Leveraged Redis Sorted Sets with high-precision timestamps (micro-seconds) to guarantee chronological delivery.",
             },
         ],
         learnings: [
-            "Row-level security in PostgreSQL is underrated",
-            "Tenant context must be explicit everywhere, including logs",
-            "Plan for tenant migration to dedicated resources from day one",
-            "Noisy neighbor mitigation is as important as isolation",
+            "WebRTC state machines are complex; robust signaling is half the battle.",
+            "Redis is an incredibly capable primary DB for real-time workloads when modeled correctly.",
+            "Signed URLs are essential for securing user-uploaded media without complex proxying.",
+            "Graceful degradation (falling back from video to audio/text) is key to good UX.",
         ],
         nextSteps: [
-            "Implement tenant-level feature flags",
-            "Add automated tenant health monitoring",
-            "Build self-service admin portal for tenant management",
+            "Implement End-to-End Encryption (E2EE) using the Web Crypto API.",
+            "Add group video calling support via a Selective Forwarding Unit (SFU).",
+            "Build a desktop client using Electron for system-level notifications.",
         ],
     },
 };
