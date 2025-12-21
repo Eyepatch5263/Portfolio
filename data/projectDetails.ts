@@ -39,7 +39,7 @@ export const projectDetails: Record<
         },
         productThinking: {
             solution:
-                "Built ExplainBytes, a web application that consolidates technical knowledge from multiple sources into a single, easy-to-navigate interface with easy to memorize flashcards.",
+                "Built ExplainBytes, a web application that consolidates technical knowledge from multiple sources into a single interface with flashcards, a newsletter system, and automated verification/welcome emails via Resend.",
             alternatives: [
                 "Doom scrolling through search results untill you find the right resource",
                 "Using AI like ChatGPT/Gemini to get your answers",
@@ -72,7 +72,11 @@ Headers: { "X-RateLimit-Client-ID": "user_123" }
   ],
   "source": "cache" | "elasticsearch",
   "latency": "15ms"
-}`,
+}
+
+// Resend Email: Newsletter Subscription
+POST /api/mailing/subscribe
+{ "email": "user@example.com" }`,
             dbSchema: `// Content served via Node.js FS module (I/O operations)
 // Direct file-system mapping for sub-millisecond resolution
 
@@ -307,6 +311,102 @@ HGETALL "room:messages:room_123" // Retrieves message history`,
             "Implement End-to-End Encryption (E2EE) using the Web Crypto API.",
             "Add group video calling support via a Selective Forwarding Unit (SFU).",
             "Build a desktop client using Electron for system-level notifications.",
+        ],
+    },
+    "codilio": {
+        problemStatement: {
+            what: "Developers and students face significant friction when trying to code or solve problems due to complex local environment setups and package management.",
+            who: "Students, interview candidates, and developers who need an instant, zero-setup coding environment.",
+            why: "Traditional local setups require installing runtimes, compilers, and managing dependencies, which discourages quick experimentation and learning.",
+        },
+        productThinking: {
+            solution:
+                "Built Codilio, an all-in-one instant coding platform where users can write, execute, and share code without any local configuration. Leveraged Clerk for seamless authentication and profile management, with a webhook-driven architecture to keep user data in sync with Convex. Utilized Piston API for multi-language execution and integrated Lemon Squeezy for subscription-based monetization.",
+            alternatives: [
+                "Local IDEs (Heavy setup, slow start)",
+                "Replit (Great but complex for just solving simple questions)",
+                "Basic Online Compilers (Often lack persistence or snippet sharing)",
+            ],
+            tradeoffs: [
+                "Convex over SQL: Chose Convex for its real-time capabilities and reactive database, sacrificing some relational complexity for rapid development and smooth UX.",
+                "Piston API: Opted for a robust third-party execution API instead of building a custom containerized runner to focus on platform features and security.",
+                "Serverless Backend: Reduced infrastructure management overhead at the cost of potential cold starts, though mitigated by Convex's architecture.",
+            ],
+        },
+        recruiterView: {
+            summary:
+                "Engineered a high-performance instant coding platform supporting multi-language execution, cloud-based persistence, and a subscription-based model.",
+            impact: [
+                "Eliminated environment setup time for users across 10 programming languages.",
+                "Implemented 100% reliable user data synchronization using Clerk webhooks and Convex internal mutations.",
+                "Achieved sub-100ms real-time synchronization of code execution history using Convex.",
+                "Integrated a secure payment gateway (Lemon Squeezy) to manage global subscriptions and tax compliance.",
+            ],
+            outcome:
+                "Delivered a robust, privacy-first developer tool that demonstrates expertise in real-time systems, serverless architectures, and third-party API integration.",
+        },
+        engineerView: {
+            apiDesign:
+                `// Execute Code via Piston
+const result = await fetch("https://emkc.org/api/v2/piston/execute", {
+  method: "POST",
+  body: JSON.stringify({
+    language: "python",
+    version: "3.10.0",
+    files: [{ content: "print('Hello World')" }]
+  })
+});
+
+// Convex Mutation: Save Snippet
+const snippetId = await mutation(api.snippets.create, {
+  title: "Binary Search",
+  code: "def binary_search()...",
+  language: "python"
+});
+
+// Lemon Squeezy Webhook
+POST /api/webhooks/lemon-sq
+{ "event_name": "order_created", "status": "paid" }
+
+// Clerk User Sync Webhook
+POST /api/webhooks/clerk
+{ "type": "user.created", "data": { "id": "user_123", ... } }`,
+            dbSchema: `// Convex Schema (Document-based & Reactive)
+
+"users" { name, email, subscriptionStatus }
+"snippets" { userId, title, code, language, createdAt }
+"executionHistory" { userId, code, output, language, timestamp }
+"questions" { title, difficulty, description, testCases }`,
+            scalingApproach:
+                "Utilized Convex's automatic scaling and built-in caching for real-time data persistence. Leveraged the Piston API's distributed execution network to handle heavy computation loads, ensuring the platform remains responsive even during high-concurrency code execution bursts.",
+            bottlenecks: [
+                "Piston API rate limits - implemented request queuing and user-level throttling",
+                "High-frequency execution history writes - optimized Convex mutations for bulk updates"
+            ],
+        },
+        challenges: [
+            {
+                issue:
+                    "Managing consistent code execution state across different programming languages with varying runtime requirements.",
+                lesson:
+                    "Standardized the input/output interface using the Piston API spec, which abstracted away the complexity of managing language-specific Docker containers.",
+            },
+            {
+                issue:
+                    "Ensuring secure and reliable payment processing for global users while handling tax compliance.",
+                lesson:
+                    "Integrated Lemon Squeezy as a Merchant of Record, which simplified global tax handling and provided a secure subscription lifecycle management system.",
+            },
+        ],
+        learnings: [
+            "Convex is exceptionally powerful for building real-time, reactive applications with minimal backend boilerplate.",
+            "Third-party abstractions like Piston can drastically accelerate the development of complex features like secure code execution.",
+            "Visualizing execution history and sharing snippets are key drivers for user engagement in developer tools.",
+        ],
+        nextSteps: [
+            "Implement a collaborative coding mode (Pair Programming) using Convex's real-time sync.",
+            "Add support for more complex multi-file projects and custom package imports.",
+            "Build a search engine and discovery feed for public code snippets to foster a community ecosystem.",
         ],
     },
 };

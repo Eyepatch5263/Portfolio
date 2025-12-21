@@ -43,9 +43,9 @@ export const projects: Project[] = [
         title: "Codilio",
         tagline: "Code As You Go",
         problem:
-            "Many people needs a fast, reliable platform to code as they go. Codilio provides a platform to code in real-time.",
-        impact: "Users won't have to setup up libraries and packages to start coding.",
-        technologies: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Convex", "lemonSqueezy", "Docker", "Kubernetes", "DecSecOps", "Piston-API", "Zustand", "Monaco-Editor"],
+            "Local environment setup for multiple programming languages is tedious and time-consuming, creating friction for students and developers who want to quickly experiment or solve problems.",
+        impact: "Enabled zero-setup, instant multi-language code execution and snippet sharing, saving developers significantly on environment configuration time.",
+        technologies: ["Next.js", "TypeScript", "Convex", "Clerk", "Piston API", "Lemon Squeezy", "Monaco Editor", "Tailwind CSS", "Zustand"],
         featured: true,
         github: "https://github.com/Eyepatch5263/codilio",
         demo: "https://codilio.pratyush.works"
