@@ -79,16 +79,16 @@ export const projects: Project[] = [
     },
     {
         id: "proj-6",
-        slug: "blog-website",
-        title: "Blog Website",
-        tagline: "Write and share your thoughts with the world.",
+        slug: "chat",
+        title: "Chat",
+        tagline: "Chat, call or video call with your friends all in realtime.",
         problem:
-            "Many people needs a fast, reliable way to write and share their thoughts with the world.",
-        impact: "Users can write and share their thoughts with the world.",
-        technologies: ["React.js","Node.js","Express.js","MongoDB","Oauth","Cloudinary","editorjs","firebase","Jwt","Multer","Docker"],
+            "We all need a platform to where we can video/voice call our friends whithout worryhing about data privacy.",
+        impact: "Users can trust that their data is safe and secure.",
+        technologies: ["React.js","Node.js","Express.js","Redis","Socket.io","Kinde Auth","Cloudinary","Tailwind CSS","Websokcets","WebRTC"],
         featured: false,
-        github:"https://github.com/Eyepatch5263/Blogging",
-        demo:"https://blog.pratyush.works"
+        github:"https://github.com/Eyepatch5263/chat_app_redis",
+        demo:"https://chat.pratyush.works"
     },
     {
         id: "proj-7",

@@ -104,7 +104,11 @@ export function ArchitectureDiagram({
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="absolute -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                    style={{
+                        left: `${node.x}%`,
+                        top: `${node.y}%`,
+                        zIndex: hoveredNode === node.id ? 50 : 1
+                    }}
                     onMouseEnter={() => setHoveredNode(node.id)}
                     onMouseLeave={() => setHoveredNode(null)}
                 >
@@ -154,21 +158,111 @@ export function ArchitectureDiagram({
 }
 
 // Default sample architecture
-export const sampleArchitecture = {
-    nodes: [
-        { id: "client", label: "React App", type: "frontend" as const, x: 15, y: 50, description: "Next.js frontend with SSR" },
-        { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 30, description: "Node.js REST API with rate limiting" },
-        { id: "auth", label: "Auth Service", type: "backend" as const, x: 40, y: 70, description: "JWT-based authentication" },
-        { id: "db", label: "PostgreSQL", type: "database" as const, x: 70, y: 50, description: "Primary data store with read replicas" },
-        { id: "cache", label: "Redis", type: "cache" as const, x: 70, y: 20, description: "Session storage and query caching" },
-        { id: "queue", label: "Kafka", type: "queue" as const, x: 85, y: 70, description: "Event streaming for async processing" },
-    ],
-    connections: [
-        { from: "client", to: "api", label: "HTTPS" },
-        { from: "client", to: "auth", label: "Auth" },
-        { from: "api", to: "db", label: "Queries" },
-        { from: "api", to: "cache", label: "Cache" },
-        { from: "auth", to: "db", label: "Users" },
-        { from: "api", to: "queue", animated: true, label: "Events" },
-    ],
+export const projectArchitecture: Record<string, { nodes: ArchitectureNode[]; connections: ArchitectureConnection[] }> = {
+    "explain-bytes": {
+        nodes: [
+            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
+            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
+            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
+            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+        ],
+        connections: [
+            { from: "client", to: "api", label: "HTTPS/JSON" },
+            { from: "api", to: "redis", label: "Cache Lookup" },
+            { from: "api", to: "elasticsearch", label: "Search Queries" },
+            { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    },
+    "codilio": {
+        nodes: [
+            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
+            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
+            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
+            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+        ],
+        connections: [
+            { from: "client", to: "api", label: "HTTPS/JSON" },
+            { from: "api", to: "redis", label: "Cache Lookup" },
+            { from: "api", to: "elasticsearch", label: "Search Queries" },
+            { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    },
+    "onlyanime": {
+        nodes: [
+            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
+            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
+            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
+            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+        ],
+        connections: [
+            { from: "client", to: "api", label: "HTTPS/JSON" },
+            { from: "api", to: "redis", label: "Cache Lookup" },
+            { from: "api", to: "elasticsearch", label: "Search Queries" },
+            { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    },
+    "spotify-chats": {
+        nodes: [
+            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
+            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
+            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
+            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+        ],
+        connections: [
+            { from: "client", to: "api", label: "HTTPS/JSON" },
+            { from: "api", to: "redis", label: "Cache Lookup" },
+            { from: "api", to: "elasticsearch", label: "Search Queries" },
+            { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    },
+    "collage-generator": {
+        nodes: [
+            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
+            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
+            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
+            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+        ],
+        connections: [
+            { from: "client", to: "api", label: "HTTPS/JSON" },
+            { from: "api", to: "redis", label: "Cache Lookup" },
+            { from: "api", to: "elasticsearch", label: "Search Queries" },
+            { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    },
+    "chat": {
+        nodes: [
+            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
+            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
+            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
+            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+        ],
+        connections: [
+            { from: "client", to: "api", label: "HTTPS/JSON" },
+            { from: "api", to: "redis", label: "Cache Lookup" },
+            { from: "api", to: "elasticsearch", label: "Search Queries" },
+            { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    },
+    "feedback": {
+        nodes: [
+            { id: "client", label: "Next.js App", type: "frontend" as const, x: 15, y: 50, description: "Modern React frontend with SSR & ISR for sub-second documentation rendering." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 40, y: 50, description: "Node.js layer handling search logic, rate limiting, and content resolution." },
+            { id: "redis", label: "Redis", type: "cache" as const, x: 65, y: 20, description: "Read-through cache serving hot search terms and frequently accessed metadata." },
+            { id: "elasticsearch", label: "Elasticsearch", type: "database" as const, x: 65, y: 50, description: "Core search engine providing fast, relevant technical concept lookup across documentation." },
+            { id: "fs", label: "Node FS", type: "database" as const, x: 85, y: 35, description: "Local file system serving as the source of truth for MDX documentation and flashcards via I/O operations." },
+        ],
+        connections: [
+            { from: "client", to: "api", label: "HTTPS/JSON" },
+            { from: "api", to: "redis", label: "Cache Lookup" },
+            { from: "api", to: "elasticsearch", label: "Search Queries" },
+            { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    }
+
 };
