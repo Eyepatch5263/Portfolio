@@ -157,7 +157,6 @@ export function ArchitectureDiagram({
     );
 }
 
-// Default sample architecture
 export const projectArchitecture: Record<string, { nodes: ArchitectureNode[]; connections: ArchitectureConnection[] }> = {
     "explain-bytes": {
         nodes: [
@@ -172,6 +171,23 @@ export const projectArchitecture: Record<string, { nodes: ArchitectureNode[]; co
             { from: "api", to: "redis", label: "Cache Lookup" },
             { from: "api", to: "elasticsearch", label: "Search Queries" },
             { from: "api", to: "fs", label: "File I/O", animated: true },
+        ],
+    },
+    "collaborative-editor": {
+        nodes: [
+            { id: "client", label: "Next.js + Tiptap", type: "frontend" as const, x: 10, y: 50, description: "Frontend featuring Tiptap editor and Yjs client for real-time collaborative editing." },
+            { id: "yjs", label: "Yjs WebSocket", type: "backend" as const, x: 30, y: 20, description: "WebSocket server handling binary CRDT updates and awareness for instant sync." },
+            { id: "api", label: "API Gateway", type: "backend" as const, x: 30, y: 50, description: "Manages authentication, authorization, and rate limiting for secure document access." },
+            { id: "supabase", label: "Supabase", type: "database" as const, x: 55, y: 50, description: "Primary storage for document states in JSON and MDX formats with conflict resolution." },
+            { id: "github", label: "GitHub API", type: "external" as const, x: 80, y: 35, description: "Handles content pushes to the repository when admin reviews and approves changes." },
+            { id: "fs", label: "Node FS / Vercel", type: "database" as const, x: 80, y: 65, description: "Structured MDX file I/O operations triggering automated Vercel deployments." },
+        ],
+        connections: [
+            { from: "client", to: "yjs", label: "CRDT Sync", animated: true },
+            { from: "client", to: "api", label: "Auth & Limit" },
+            { from: "api", to: "supabase", label: "Persistence" },
+            { from: "supabase", to: "github", label: "Admin Push" },
+            { from: "github", to: "fs", label: "I/O & Deploy", animated: true },
         ],
     },
     "codilio": {
