@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, ExternalLink, Github } from "lucide-react";
+import { ArrowLeft, Construction, ExternalLink, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -63,13 +63,70 @@ export default function ProjectPage({ params }: ProjectPageParams) {
     const [mode, setMode] = React.useState<"recruiter" | "engineer">("recruiter");
 
     const project = projects.find((p) => p.slug === resolvedParams.slug);
-    console.log(resolvedParams.slug);
 
     if (!project) {
         notFound();
     }
 
-    const details = projectDetails[project.slug] || defaultDetails;
+    const details = projectDetails[project.slug];
+
+    // If no specific details, show a revamping message
+    if (!details) {
+        return (
+            <>
+                <Header />
+                <main className="min-h-screen pt-24 pb-20">
+                    <div className="container mx-auto px-6">
+                        {/* Back Button */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <Button variant="ghost" asChild className="mb-8">
+                                <Link href="/#projects">
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    Back to Projects
+                                </Link>
+                            </Button>
+                        </motion.div>
+
+                        {/* Header */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="mb-12"
+                        >
+                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+                                {project.title}
+                            </h1>
+                            <p className="mt-4 text-xl text-muted-foreground max-w-3xl">
+                                {project.tagline}
+                            </p>
+                        </motion.div>
+
+                        {/* Revamp Banner */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="flex flex-col items-center justify-center text-center p-8 md:p-12 border rounded-lg bg-secondary/50"
+                        >
+                            <Construction className="h-12 w-12 mb-4 text-primary" />
+                            <h2 className="text-2xl font-bold mb-2">
+                                Project Details Under Construction
+                            </h2>
+                            <p className="text-muted-foreground max-w-md">
+                                I&apos;m currently revamping the case study for this project to provide more detailed insights. Please check back soon!
+                            </p>
+                        </motion.div>
+                    </div>
+                </main>
+                <Footer />
+            </>
+        );
+    }
 
     return (
         <>
