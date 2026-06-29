@@ -140,7 +140,7 @@ export default function ProjectPage({ params }: ProjectPageParams) {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.3 }}
                     >
-                        <Button variant="ghost" asChild className="mb-8">
+                        <Button variant="ghost" asChild className="mb-8 dark:hover:text-white">
                             <Link href="/#projects">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Projects
@@ -157,13 +157,13 @@ export default function ProjectPage({ params }: ProjectPageParams) {
                     >
                         <div className="flex flex-wrap items-center gap-4 mb-4">
                             <div className="flex gap-2">
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button variant="ghost" size="sm" asChild className="dark:hover:text-white">
                                     <a href={project.github} target="_blank" rel="noopener noreferrer">
                                         <Github className="mr-2 h-4 w-4" />
                                         Code
                                     </a>
                                 </Button>
-                                <Button variant="ghost" size="sm" asChild>
+                                <Button variant="ghost" size="sm" asChild className="dark:hover:text-white">
                                     <a href={project.demo} target="_blank" rel="noopener noreferrer">
                                         <ExternalLink className="mr-2 h-4 w-4" />
                                         Live Demo

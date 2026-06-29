@@ -30,7 +30,7 @@ export const experiences: Experience[] = [
         id: "exp-2",
         company: "Palisaodoes Foundation",
         role: "Contributor",
-        duration: "Oct 2025 - present",
+        duration: "Oct 2025 - Mar 2026",
         type: "fulltime",
         description:
             "As a contributor during Hacktoberfest at Palisaodoes Foundation, I worked on enhancing the overall code reliability and development workflow of open - source projects.My key contributions included:",

@@ -16,7 +16,7 @@ export function Hero() {
     return (
         <section
             id="overview"
-            className="relative min-h-screen flex items-center justify-center bg-background overflow-hidden"
+            className="relative min-h-screen flex items-center justify-center bg-background overflow-hidden snap-start scroll-mt-24"
         >
             {/* Subtle grid background - visible in both light and dark mode */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808020_1px,transparent_1px),linear-gradient(to_bottom,#80808020_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-size-[24px_24px]" />

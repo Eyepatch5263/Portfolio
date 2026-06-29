@@ -15,7 +15,7 @@ const contextLabels = {
 
 export function Testimonials() {
     return (
-        <SectionWrapper id="testimonials" className="bg-secondary/30">
+        <SectionWrapper id="testimonials">
             <SectionHeader
                 title="Testimonials"
                 subtitle="What colleagues, managers, and clients say about working with me."

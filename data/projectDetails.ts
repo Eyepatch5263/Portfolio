@@ -409,5 +409,107 @@ POST /api/webhooks/clerk
             "Build a search engine and discovery feed for public code snippets to foster a community ecosystem.",
         ],
     },
-    
+    "anima": {
+        problemStatement: {
+            what: "Anime fans and manga readers face significant friction when trying to discover shows or chapters based on their specific, nuanced intent (e.g. 'anime with god-level protagonist', 'vikings in the old age', or specific scenes and atmospheres) because traditional platforms are constrained to exact-match keyword indexing or genre tags.",
+            who: "Anime fans, manga readers, and curators seeking intent-based rather than keyword-restricted content discovery.",
+            why: "When a user forgets a title but remembers a specific thematic motif, emotional arc, or character style, standard keyword matching on descriptions fails to return relevant suggestions.",
+        },
+        productThinking: {
+            solution: "Built Anima, an intent-driven search engine indexing 14,000 anime series. Users query using natural language representing their scene-level or character-archetype intent, which is translated into multi-vector queries. The system consumes the Anilist GraphQL API for displaying current metadata, trending lists, and manga filters, offering an intent-driven search experience superior to conventional databases.",
+            alternatives: [
+                "Anilist / MyAnimeList (Limited to hardcoded tags, genres, and exact text search)",
+                "General Search Engines (Lacks structural anime metadata, ratings, and filters)",
+            ],
+            tradeoffs: [
+                "Infrastructure vs. Billing: Powering dense multi-vector embeddings, cross-encoding, and re-ranking requires high compute. To keep billing costs low, the compute runs on cheap instances, resulting in a search latency bottleneck of up to 2 minutes, requiring custom batch-processing and client feedback.",
+                "Cloud Deployment vs. Local: The stack relies on multiple heavy Docker containers (Qdrant, Ollama, model runners) which necessitates cloud container hosting (DigitalOcean) for production, though developers can clone it locally for testing.",
+            ],
+        },
+        recruiterView: {
+            summary: "Designed and built an intent-based semantic search engine indexing 14,000 anime, utilizing multi-vector dense retrieval, cross-encoder re-ranking, and integration with the Anilist GraphQL API.",
+            impact: [
+                "Enabled highly accurate semantic search over 14,000 titles by indexing tag-specific dimensions.",
+                "Implemented weighted multi-vector search combining synopsis, protagonist archetypes, world elements, and conflict types.",
+                "Applied cross-encoding re-ranking and MMR (Maximal Marginal Relevance) diversity scoring to ensure optimal, non-redundant search relevance.",
+                "Integrated Anilist's GraphQL query endpoint to seamlessly fetch trending, popular, and seasonal lists in real time.",
+            ],
+            outcome: "Delivered a fully working semantic search pipeline demonstrating proficiency in vector databases (Qdrant), Docker deployments, GraphQL API integrations, and machine learning search logic.",
+        },
+        engineerView: {
+            apiDesign: `// Anilist GraphQL Query for Anime metadata
+query ($page: Int, $perPage: Int, $search: String) {
+  Page(page: $page, perPage: $perPage) {
+    media(search: $search, type: ANIME) {
+      id
+      title { romaji english }
+      coverImage { large }
+      description
+      genres
+      tags { name }
+    }
+  }
+}`,
+            dbSchema: `-- PostgreSQL Ingestion Schema (Raw data pre-vectorization)
+CREATE TABLE anime_data (
+  id INT PRIMARY KEY,
+  title_romaji TEXT,
+  title_english TEXT,
+  genres TEXT[],
+  tags TEXT[],
+  synopsis TEXT,
+  description TEXT,
+  is_adult BOOLEAN,
+  cover_image TEXT,
+  banner_image TEXT,
+  mean_score FLOAT4,
+  score FLOAT4,
+  start_year INT4,
+  season_year INT4,
+  emotional_tone TEXT,
+  pacing_style TEXT,
+  narrative_theme TEXT,
+  patagonist_archetype TEXT,
+  psychological_elements TEXT,
+  emotional_impact TEXT,
+  story_structure TEXT,
+  atmosphere TEXT
+);
+
+-- Qdrant Collection Structure (Multi-Vector Payloads)
+-- Stored vectors of length 384 generated using BGE-small:
+-- 1. default (General synopsis)
+-- 2. character_archetypes
+-- 3. core_concepts
+-- 4. conflict_types
+-- 5. world_elements
+-- 6. strategic_elements
+-- 7. philosophical_elements`,
+            scalingApproach: "Pre-computed 384-dimensional dense vectors for all 14,000 anime series in batches to minimize real-time embedding costs. Used Qdrant's multi-vector capabilities to host specific fields like character archetypes and themes in distinct vectors. Configured Next.js API routes to query the vector indexes and perform weighted cosine similarity scoring, combining results with real-time Anilist GraphQL queries.",
+            bottlenecks: [
+                "Model compute latency: Generating embeddings, executing cross-encoding re-ranking, and applying MMR takes up to 2 minutes on low-tier cloud instances.",
+                "Docker container footprint: Hosting Qdrant, Ollama, Postgres, and the web app requires significant RAM and CPU hosting overhead.",
+            ],
+        },
+        challenges: [
+            {
+                issue: "Simple vector searches on descriptions returned irrelevant hits for queries specifying character details or relationships.",
+                lesson: "Iteratively refined the pipeline from basic vector search to multi-vector weighted search, then added cross-encoding re-ranking and Maximal Marginal Relevance (MMR) diversity scoring.",
+            },
+            {
+                issue: "Deploying high-compute semantic search models (Ollama, cross-encoders) on low-cost cloud setups without exceeding resource limits.",
+                lesson: "Segregated the architecture: hosted Next.js on Vercel, placed Postgres and Qdrant on persistent cloud instances, and optimized Ollama containers to use CPU-friendly quantized models.",
+            },
+        ],
+        learnings: [
+            "Semantic search requires more than simple embeddings; re-ranking, cross-encoding, and MMR diversity are vital for production-grade relevance.",
+            "Structuring multi-vector payloads in Qdrant dramatically improves search precision for multi-dimensional data.",
+            "Building AI-powered developer products requires balancing model precision with infrastructure hosting costs.",
+        ],
+        nextSteps: [
+            "Implement narrative-search to allow search queries based on complex storyline arcs.",
+            "Build a conversational multi-agent recommender system using Qwen2.5:5b.",
+            "Explore scene-level video search using CLIP models and temporal frame extraction.",
+        ],
+    },
 };

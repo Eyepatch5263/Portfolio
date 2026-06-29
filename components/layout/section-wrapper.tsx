@@ -25,7 +25,7 @@ export function SectionWrapper({
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className={cn(
-                "py-20 md:py-28",
+                "py-20 md:py-28 snap-start scroll-mt-24",
                 !fullWidth && "container mx-auto px-6",
                 className
             )}

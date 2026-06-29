@@ -46,10 +46,8 @@ export function Header() {
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled
-            ? "bg-background/80 backdrop-blur-md border-b border-border"
-            : "bg-transparent"
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-md border-b border-border",
+          isScrolled && "shadow-sm"
         )}
       >
         <nav className="container mx-auto px-6 py-4">
@@ -69,7 +67,7 @@ export function Header() {
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+                  className="px-4 py-2 text-sm text-muted-foreground hover:text-white transition-colors rounded-md hover:bg-accent"
                 >
                   {item.name}
                 </a>
@@ -79,8 +77,8 @@ export function Header() {
             {/* CTA Button & Theme Toggle - Desktop */}
             <div className="hidden md:flex items-center gap-2">
               <ThemeToggle />
-              <Button variant="outline" size="sm" asChild>
-                <a href="mailto:hello@example.com">Get in Touch</a>
+              <Button asChild className="dark:hover:text-white" variant="outline" size="sm">
+                <a href="mailto:pratyushpragyey@gmail.com">Get in Touch</a>
               </Button>
             </div>
 
@@ -90,6 +88,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
+                className="dark:hover:text-white"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-label="Toggle menu"
               >
@@ -124,7 +123,7 @@ export function Header() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="px-4 py-3 text-lg text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+                    className="px-4 py-3 text-lg text-muted-foreground hover:text-white transition-colors rounded-md hover:bg-accent"
                   >
                     {item.name}
                   </motion.a>
