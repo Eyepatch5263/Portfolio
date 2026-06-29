@@ -10,6 +10,23 @@ import { Footer } from "@/components/layout/footer";
 import { TableOfContents } from "@/components/table-of-contents";
 import { getBlogPostByType, getAllBlogPostsByType, getBlogSlugsByType, type BlogType } from "@/lib/mdx";
 
+// Helper to format date without calling dynamic Date APIs
+function formatPostDate(dateStr: string) {
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    const year = parts[0];
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    if (monthIndex >= 0 && monthIndex < 12) {
+        return `${months[monthIndex]} ${day}, ${year}`;
+    }
+    return dateStr;
+}
+
 // Generate static params for all blog posts from both types
 export async function generateStaticParams() {
     const engineeringSlugs = getBlogSlugsByType("engineering").map((slug) => ({
@@ -25,25 +42,19 @@ interface BlogPostPageProps {
     params: Promise<{
         slug: string;
     }>;
-    searchParams: Promise<{
-        type?: string;
-    }>;
 }
 
-export default async function BlogPostPage({ params, searchParams }: BlogPostPageProps) {
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params;
-    const { type } = await searchParams;
 
-    // Determine blog type from URL param, default to trying engineering first
-    let blogType: BlogType = type === "tech" ? "tech" : "engineering";
-    let post = await getBlogPostByType(slug, blogType);
+    // Try to find post in engineering first, then tech
+    let blogType: BlogType = "engineering";
+    let post = await getBlogPostByType(slug, "engineering");
 
-    // If not found in specified type, try the other type
     if (!post) {
-        const alternateType: BlogType = blogType === "engineering" ? "tech" : "engineering";
-        post = await getBlogPostByType(slug, alternateType);
+        post = await getBlogPostByType(slug, "tech");
         if (post) {
-            blogType = alternateType;
+            blogType = "tech";
         }
     }
 
@@ -90,13 +101,7 @@ export default async function BlogPostPage({ params, searchParams }: BlogPostPag
                                 <div className="flex items-center gap-6 mt-6 text-sm text-muted-foreground">
                                     <div className="flex items-center gap-1">
                                         <Calendar className="h-4 w-4" />
-                                        <span>
-                                            {new Date(post.date).toLocaleDateString("en-US", {
-                                                month: "long",
-                                                day: "numeric",
-                                                year: "numeric",
-                                            })}
-                                        </span>
+                                        <span>{formatPostDate(post.date)}</span>
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <Clock className="h-4 w-4" />

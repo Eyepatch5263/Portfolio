@@ -52,7 +52,7 @@ export function Footer() {
                             </span>
                         </Link>
                         <p className="text-sm text-muted-foreground">
-                            © {new Date().getFullYear()} All rights reserved.
+                            © 2026 All rights reserved.
                         </p>
                     </div>
 

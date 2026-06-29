@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef } from "react";
 import { Children, isValidElement } from "react";
 import { cn } from "@/lib/utils";
-import { Mermaid } from "@/components/mermaid";
+import { MermaidWrapper } from "@/components/mermaid-wrapper";
 
 // Language display names
 const languageDisplay: Record<string, string> = {
@@ -77,7 +77,7 @@ function Figure({
     // Check if this is a mermaid diagram
     if (dataLanguage === "mermaid") {
         const chartContent = extractTextContent(children);
-        return <Mermaid chart={chartContent} />;
+        return <MermaidWrapper chart={chartContent} />;
     }
 
     if (!isCodeBlock) {
@@ -368,5 +368,5 @@ export const mdxComponents = {
     blockquote: Blockquote,
     hr: Hr,
     a: A,
-    Mermaid: Mermaid,
+    Mermaid: MermaidWrapper,
 };

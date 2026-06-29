@@ -68,7 +68,7 @@ export function getAllBlogPostsByType(type: BlogType): BlogPost[] {
                 slug,
                 title: data.title || slug,
                 excerpt: data.excerpt || "",
-                date: data.date || new Date().toISOString(),
+                date: data.date || "2026-01-01",
                 author: data.author,
                 tags: data.tags || [],
                 readingTime: stats.text,
@@ -76,7 +76,7 @@ export function getAllBlogPostsByType(type: BlogType): BlogPost[] {
             };
         })
         .filter((post) => post.published)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        .sort((a, b) => b.date.localeCompare(a.date));
 
     return posts;
 }
@@ -108,6 +108,7 @@ function extractHeadings(content: string): { id: string; text: string; level: nu
 
 // Get a single blog post with content by type
 export async function getBlogPostByType(slug: string, type: BlogType): Promise<BlogPostWithContent | null> {
+    "use cache";
     const dir = BLOG_DIRS[type];
     const filePath = path.join(dir, `${slug}.mdx`);
 
@@ -144,7 +145,7 @@ export async function getBlogPostByType(slug: string, type: BlogType): Promise<B
         slug,
         title: data.title || slug,
         excerpt: data.excerpt || "",
-        date: data.date || new Date().toISOString(),
+        date: data.date || "2026-01-01",
         author: data.author,
         tags: data.tags || [],
         readingTime: stats.text,

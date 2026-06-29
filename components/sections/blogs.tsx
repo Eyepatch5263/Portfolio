@@ -10,6 +10,23 @@ import { Button } from "@/components/ui/button";
 import { SectionWrapper, SectionHeader } from "@/components/layout/section-wrapper";
 import { cn } from "@/lib/utils";
 
+// Helper to format date without calling dynamic Date APIs
+function formatPostDateShort(dateStr: string) {
+    const months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    const year = parts[0];
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    if (monthIndex >= 0 && monthIndex < 12) {
+        return `${months[monthIndex]} ${day}, ${year}`;
+    }
+    return dateStr;
+}
+
 interface BlogPost {
     slug: string;
     title: string;
@@ -138,13 +155,7 @@ export function Blogs({ engineeringPosts, techPosts }: BlogsProps) {
                                                 <div className="flex md:flex-col items-center md:items-end gap-4 md:gap-2 text-sm text-muted-foreground">
                                                     <div className="flex items-center gap-1">
                                                         <Calendar className="h-4 w-4" />
-                                                        <span>
-                                                            {new Date(blog.date).toLocaleDateString("en-US", {
-                                                                month: "short",
-                                                                day: "numeric",
-                                                                year: "numeric",
-                                                            })}
-                                                        </span>
+                                                        <span>{formatPostDateShort(blog.date)}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1">
                                                         <Clock className="h-4 w-4" />

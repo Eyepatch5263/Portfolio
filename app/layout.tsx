@@ -7,6 +7,7 @@ const inriaSerif = Inria_Serif({
   subsets: ["latin"],
   variable: "--font-inria-serif",
   weight: ["300", "400", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
