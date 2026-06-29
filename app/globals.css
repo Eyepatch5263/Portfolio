@@ -116,21 +116,26 @@
 }
 
 @layer base {
-  html, body {
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-    overflow-y: auto;
-    height: 100%;
+  @media (min-width: 768px) {
+    html, body {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      overflow-y: auto;
+      height: 100%;
+    }
+    #overview,
+    section[id] {
+      scroll-snap-align: start;
+      scroll-margin-top: 6rem;
+    }
+    footer {
+      scroll-snap-align: end;
+    }
   }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-  }
-  #overview,
-  section[id] {
-    scroll-snap-align: start;
-    scroll-margin-top: 6rem;
   }
 }

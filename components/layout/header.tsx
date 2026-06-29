@@ -130,7 +130,7 @@ export function Header() {
                 ))}
                 <div className="pt-4 mt-4 border-t border-border">
                   <Button className="w-full" asChild>
-                    <a href="mailto:hello@example.com">Get in Touch</a>
+                    <a href="mailto:pratyushpragyey@gmail.com">Get in Touch</a>
                   </Button>
                 </div>
               </div>
