@@ -27,6 +27,11 @@ export const metadata: Metadata = {
     description: "Building scalable systems and beautiful products with real users in mind.",
     type: "website",
   },
+  icons: {
+    icon: "/portfolio.svg",
+    shortcut: "/portfolio.svg",
+    apple: "/portfolio.svg",
+  },
 };
 
 export default function RootLayout({

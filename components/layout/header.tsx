@@ -7,7 +7,6 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 const navItems = [
   { name: "Overview", href: "#overview" },
@@ -55,9 +54,39 @@ export function Header() {
             {/* Logo */}
             <Link
               href="/"
-              className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2.5 hover:opacity-80 transition-opacity text-foreground"
             >
-              <Image src="/logo.png" alt="Logo" width={50} height={50} />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 100 100"
+                fill="none"
+                className="w-10 h-10 text-foreground"
+              >
+                <g stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                  {/* Lines (drawn behind) */}
+                  <path d="M 50 15 L 85 50 L 50 85 L 15 50 Z" />
+                  <path d="M 50 15 L 50 85" />
+                  <path d="M 15 50 L 85 50" />
+                  
+                  {/* Outer Circles (with background fill to mask lines) */}
+                  <circle cx="50" cy="15" r="8" fill="var(--background)" />
+                  <circle cx="85" cy="50" r="8" fill="var(--background)" />
+                  <circle cx="50" cy="85" r="8" fill="var(--background)" />
+                  <circle cx="15" cy="50" r="8" fill="var(--background)" />
+                  <circle cx="50" cy="50" r="8" fill="var(--background)" />
+                  
+                  {/* Inner Circles (hollow outlines) */}
+                  <circle cx="50" cy="15" r="4" />
+                  <circle cx="85" cy="50" r="4" />
+                  <circle cx="50" cy="85" r="4" />
+                  <circle cx="15" cy="50" r="4" />
+                  <circle cx="50" cy="50" r="4" />
+                </g>
+              </svg>
+              <span className="text-xl font-bold tracking-tight">
+                <span className="text-foreground">pratyush</span>
+                <span className="text-muted-foreground">.works</span>
+              </span>
             </Link>
 
             {/* Desktop Navigation */}

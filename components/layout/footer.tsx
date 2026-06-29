@@ -17,10 +17,39 @@ export function Footer() {
                     <div className="flex flex-col items-center md:items-start gap-2">
                         <Link
                             href="/"
-                            className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity"
+                            className="flex items-center gap-2 hover:opacity-80 transition-opacity text-foreground"
                         >
-                            <span className="text-foreground">pratyush</span>
-                            <span className="text-muted-foreground">.works</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 100 100"
+                                fill="none"
+                                className="w-6 h-6 text-foreground"
+                            >
+                                <g stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none">
+                                    {/* Lines (drawn behind) */}
+                                    <path d="M 50 15 L 85 50 L 50 85 L 15 50 Z" />
+                                    <path d="M 50 15 L 50 85" />
+                                    <path d="M 15 50 L 85 50" />
+                                    
+                                    {/* Outer Circles (with background fill to mask lines) */}
+                                    <circle cx="50" cy="15" r="8" fill="var(--background)" />
+                                    <circle cx="85" cy="50" r="8" fill="var(--background)" />
+                                    <circle cx="50" cy="85" r="8" fill="var(--background)" />
+                                    <circle cx="15" cy="50" r="8" fill="var(--background)" />
+                                    <circle cx="50" cy="50" r="8" fill="var(--background)" />
+                                    
+                                    {/* Inner Circles (hollow outlines) */}
+                                    <circle cx="50" cy="15" r="4" />
+                                    <circle cx="85" cy="50" r="4" />
+                                    <circle cx="50" cy="85" r="4" />
+                                    <circle cx="15" cy="50" r="4" />
+                                    <circle cx="50" cy="50" r="4" />
+                                </g>
+                            </svg>
+                            <span className="text-lg font-bold tracking-tight">
+                                <span className="text-foreground">pratyush</span>
+                                <span className="text-muted-foreground">.works</span>
+                            </span>
                         </Link>
                         <p className="text-sm text-muted-foreground">
                             © {new Date().getFullYear()} All rights reserved.
