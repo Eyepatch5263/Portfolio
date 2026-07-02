@@ -107,6 +107,9 @@ export function Header() {
             <div className="hidden md:flex items-center gap-2">
               <ThemeToggle />
               <Button asChild className="dark:hover:text-white" variant="outline" size="sm">
+                <a href="/pratyush_pragyey.pdf" download="pratyush_pragyey.pdf" target="_blank" rel="noopener noreferrer">Resume</a>
+              </Button>
+              <Button asChild className="dark:hover:text-white" variant="outline" size="sm">
                 <a href="mailto:pratyushpragyey@gmail.com">Get in Touch</a>
               </Button>
             </div>
@@ -157,7 +160,10 @@ export function Header() {
                     {item.name}
                   </motion.a>
                 ))}
-                <div className="pt-4 mt-4 border-t border-border">
+                <div className="pt-4 mt-4 border-t border-border flex flex-col gap-2">
+                  <Button className="w-full" asChild variant="outline">
+                    <a href="/pratyush_pragyey.pdf" download="pratyush_pragyey.pdf" target="_blank" rel="noopener noreferrer">Resume</a>
+                  </Button>
                   <Button className="w-full" asChild>
                     <a href="mailto:pratyushpragyey@gmail.com">Get in Touch</a>
                   </Button>
